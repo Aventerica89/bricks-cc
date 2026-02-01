@@ -1,6 +1,48 @@
+import { z } from "zod";
 import type { ChatRequest } from "@/types/chat";
 import type { BricksEditRequest } from "@/types/bricks";
 import type { ClientFeedbackRequest } from "@/types/client";
+
+/**
+ * Zod schema for chat requests
+ */
+const ChatRequestSchema = z.object({
+  clientId: z.string().min(1, "clientId is required"),
+  siteId: z.string().min(1, "siteId is required"),
+  message: z.string().min(1, "message is required").max(10000, "message must be less than 10000 characters"),
+  context: z
+    .object({
+      basecampProjectId: z.number().optional(),
+      currentPageId: z.number().optional(),
+    })
+    .optional(),
+});
+
+/**
+ * Zod schema for Bricks edit requests
+ */
+const BricksEditSchema = z.object({
+  elementId: z.string().min(1, "elementId is required"),
+  property: z.string().min(1, "property is required"),
+  value: z.unknown(),
+});
+
+const BricksEditRequestSchema = z.object({
+  siteId: z.string().min(1, "siteId is required"),
+  pageId: z.number().int().positive("pageId must be a positive integer"),
+  edits: z.array(BricksEditSchema).min(1, "edits array cannot be empty"),
+});
+
+/**
+ * Zod schema for client feedback requests
+ */
+const ClientFeedbackRequestSchema = z.object({
+  clientId: z.string().min(1, "clientId is required"),
+  siteId: z.string().min(1, "siteId is required"),
+  message: z.string().min(1, "message is required"),
+  feedbackType: z.enum(["bug", "feature", "general"]).default("general"),
+  attachments: z.array(z.string().url()).optional(),
+});
 
 /**
  * Validate a chat request
@@ -8,37 +50,15 @@ import type { ClientFeedbackRequest } from "@/types/client";
 export function validateChatRequest(
   data: unknown
 ): { valid: true; data: ChatRequest } | { valid: false; error: string } {
-  if (!data || typeof data !== "object") {
+  try {
+    const validated = ChatRequestSchema.parse(data);
+    return { valid: true, data: validated };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { valid: false, error: error.errors[0].message };
+    }
     return { valid: false, error: "Invalid request body" };
   }
-
-  const req = data as Record<string, unknown>;
-
-  if (!req.clientId || typeof req.clientId !== "string") {
-    return { valid: false, error: "clientId is required and must be a string" };
-  }
-
-  if (!req.siteId || typeof req.siteId !== "string") {
-    return { valid: false, error: "siteId is required and must be a string" };
-  }
-
-  if (!req.message || typeof req.message !== "string") {
-    return { valid: false, error: "message is required and must be a string" };
-  }
-
-  if (req.message.length > 10000) {
-    return { valid: false, error: "message must be less than 10000 characters" };
-  }
-
-  return {
-    valid: true,
-    data: {
-      clientId: req.clientId,
-      siteId: req.siteId,
-      message: req.message,
-      context: req.context as ChatRequest["context"],
-    },
-  };
 }
 
 /**
@@ -47,47 +67,15 @@ export function validateChatRequest(
 export function validateBricksEditRequest(
   data: unknown
 ): { valid: true; data: BricksEditRequest } | { valid: false; error: string } {
-  if (!data || typeof data !== "object") {
+  try {
+    const validated = BricksEditRequestSchema.parse(data);
+    return { valid: true, data: validated };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { valid: false, error: error.errors[0].message };
+    }
     return { valid: false, error: "Invalid request body" };
   }
-
-  const req = data as Record<string, unknown>;
-
-  if (!req.siteId || typeof req.siteId !== "string") {
-    return { valid: false, error: "siteId is required and must be a string" };
-  }
-
-  if (!req.pageId || typeof req.pageId !== "number") {
-    return { valid: false, error: "pageId is required and must be a number" };
-  }
-
-  if (!Array.isArray(req.edits)) {
-    return { valid: false, error: "edits is required and must be an array" };
-  }
-
-  for (const edit of req.edits) {
-    if (!edit.elementId || typeof edit.elementId !== "string") {
-      return {
-        valid: false,
-        error: "Each edit must have an elementId string",
-      };
-    }
-    if (!edit.property || typeof edit.property !== "string") {
-      return { valid: false, error: "Each edit must have a property string" };
-    }
-    if (edit.value === undefined) {
-      return { valid: false, error: "Each edit must have a value" };
-    }
-  }
-
-  return {
-    valid: true,
-    data: {
-      siteId: req.siteId,
-      pageId: req.pageId,
-      edits: req.edits as BricksEditRequest["edits"],
-    },
-  };
 }
 
 /**
@@ -98,42 +86,15 @@ export function validateFeedbackRequest(
 ):
   | { valid: true; data: ClientFeedbackRequest }
   | { valid: false; error: string } {
-  if (!data || typeof data !== "object") {
+  try {
+    const validated = ClientFeedbackRequestSchema.parse(data);
+    return { valid: true, data: validated };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { valid: false, error: error.errors[0].message };
+    }
     return { valid: false, error: "Invalid request body" };
   }
-
-  const req = data as Record<string, unknown>;
-
-  if (!req.clientId || typeof req.clientId !== "string") {
-    return { valid: false, error: "clientId is required and must be a string" };
-  }
-
-  if (!req.siteId || typeof req.siteId !== "string") {
-    return { valid: false, error: "siteId is required and must be a string" };
-  }
-
-  if (!req.message || typeof req.message !== "string") {
-    return { valid: false, error: "message is required and must be a string" };
-  }
-
-  const validTypes = ["bug", "feature", "general"];
-  if (req.feedbackType && !validTypes.includes(req.feedbackType as string)) {
-    return {
-      valid: false,
-      error: `feedbackType must be one of: ${validTypes.join(", ")}`,
-    };
-  }
-
-  return {
-    valid: true,
-    data: {
-      clientId: req.clientId,
-      siteId: req.siteId,
-      message: req.message,
-      feedbackType: (req.feedbackType as "bug" | "feature" | "general") || "general",
-      attachments: req.attachments as string[] | undefined,
-    },
-  };
 }
 
 /**
@@ -149,21 +110,17 @@ export function sanitizeInput(input: string): string {
 }
 
 /**
- * Validate email format
+ * Validate email format using Zod
  */
 export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  const emailSchema = z.string().email();
+  return emailSchema.safeParse(email).success;
 }
 
 /**
- * Validate URL format
+ * Validate URL format using Zod
  */
 export function isValidUrl(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
-  }
+  const urlSchema = z.string().url();
+  return urlSchema.safeParse(url).success;
 }
