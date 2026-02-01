@@ -62,7 +62,7 @@ export const basecampSync = sqliteTable("basecamp_sync", {
     .$type<"active" | "paused" | "error">()
     .default("active"),
   lastSync: integer("last_sync", { mode: "timestamp" }),
-  apiToken: text("api_token"), // Should be encrypted in production
+  apiToken: text("api_token"), // Encrypted at rest (AES-256-GCM)
 });
 
 // Client sites
@@ -72,7 +72,7 @@ export const clientSites = sqliteTable("client_sites", {
   name: text("name").notNull(),
   url: text("url").notNull(),
   wordpressApiUrl: text("wordpress_api_url"),
-  bricksApiKey: text("bricks_api_key"),
+  bricksApiKey: text("bricks_api_key"), // Encrypted at rest (AES-256-GCM)
   basecampProjectId: integer("basecamp_project_id"),
   isActive: integer("is_active", { mode: "boolean" }).default(true),
   createdAt: integer("created_at", { mode: "timestamp" }).default(
