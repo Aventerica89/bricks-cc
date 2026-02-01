@@ -6,10 +6,27 @@ import { buildContext } from "@/lib/context";
 import { validateChatRequest, sanitizeInput } from "@/utils/validators";
 import { SYSTEM_PROMPTS, parseActions } from "@/utils/prompt-templates";
 import { generateId } from "@/utils/formatting";
+import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import type { ChatResponse, ChatAction } from "@/types/chat";
 
 export async function POST(request: NextRequest) {
   try {
+    // Apply rate limiting
+    const rateLimit = applyRateLimit(request, RATE_LIMITS.chat);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": RATE_LIMITS.chat.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+          },
+        }
+      );
+    }
+
     const body = await request.json();
 
     // Validate request

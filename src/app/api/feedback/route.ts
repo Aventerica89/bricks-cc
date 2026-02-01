@@ -4,11 +4,28 @@ import { clientFeedback, clientSites, basecampSync } from "@/db/schema";
 import { createBasecampClient } from "@/lib/basecamp";
 import { validateFeedbackRequest, sanitizeInput } from "@/utils/validators";
 import { generateId } from "@/utils/formatting";
+import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { eq, desc, and } from "drizzle-orm";
 import type { ClientFeedbackResponse } from "@/types/client";
 
 export async function POST(request: NextRequest) {
   try {
+    // Apply rate limiting
+    const rateLimit = applyRateLimit(request, RATE_LIMITS.feedback);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many feedback submissions. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": RATE_LIMITS.feedback.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+          },
+        }
+      );
+    }
+
     const body = await request.json();
 
     // Validate request
