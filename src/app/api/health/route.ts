@@ -53,7 +53,7 @@ export async function GET() {
 async function checkDatabase(): Promise<boolean> {
   try {
     // Simple query to test database connection
-    await db.run(sql`SELECT 1`);
+    await db.get(sql`SELECT 1 as result`);
     return true;
   } catch (error) {
     console.error("Database health check failed:", error);
