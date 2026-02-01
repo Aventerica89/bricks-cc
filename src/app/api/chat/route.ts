@@ -7,10 +7,19 @@ import { validateChatRequest, sanitizeInput } from "@/utils/validators";
 import { SYSTEM_PROMPTS, parseActions } from "@/utils/prompt-templates";
 import { generateId } from "@/utils/formatting";
 import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { validateCsrf } from "@/lib/csrf";
 import type { ChatResponse, ChatAction } from "@/types/chat";
 
 export async function POST(request: NextRequest) {
   try {
+    // Validate CSRF token
+    if (!validateCsrf(request)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
+
     // Apply rate limiting
     const rateLimit = applyRateLimit(request, RATE_LIMITS.chat);
     if (!rateLimit.success) {

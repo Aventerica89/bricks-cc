@@ -5,11 +5,20 @@ import { createBasecampClient } from "@/lib/basecamp";
 import { validateFeedbackRequest, sanitizeInput } from "@/utils/validators";
 import { generateId } from "@/utils/formatting";
 import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { validateCsrf } from "@/lib/csrf";
 import { eq, desc, and } from "drizzle-orm";
 import type { ClientFeedbackResponse } from "@/types/client";
 
 export async function POST(request: NextRequest) {
   try {
+    // Validate CSRF token
+    if (!validateCsrf(request)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
+
     // Apply rate limiting
     const rateLimit = applyRateLimit(request, RATE_LIMITS.feedback);
     if (!rateLimit.success) {
@@ -160,6 +169,14 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Validate CSRF token
+    if (!validateCsrf(request)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { feedbackId, status } = body;
 
