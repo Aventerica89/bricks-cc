@@ -11,25 +11,26 @@ export async function GET() {
 
   try {
     // Check database connectivity
-    const dbHealthy = await checkDatabase();
+    const dbResult = await checkDatabase();
 
     // Get application info
     const health = {
-      status: dbHealthy ? "healthy" : "degraded",
+      status: dbResult.healthy ? "healthy" : "degraded",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || "development",
       version: process.env.npm_package_version || "1.0.0",
       uptime: process.uptime(),
       checks: {
         database: {
-          status: dbHealthy ? "ok" : "error",
+          status: dbResult.healthy ? "ok" : "error",
           responseTime: Date.now() - startTime,
+          error: dbResult.error || undefined,
         },
       },
     };
 
     // Return 200 if healthy, 503 if degraded
-    const status = dbHealthy ? 200 : 503;
+    const status = dbResult.healthy ? 200 : 503;
 
     return NextResponse.json(health, { status });
   } catch (error) {
@@ -50,13 +51,14 @@ export async function GET() {
  * Check database connectivity
  * Returns true if database is reachable
  */
-async function checkDatabase(): Promise<boolean> {
+async function checkDatabase(): Promise<{ healthy: boolean; error?: string }> {
   try {
     // Simple query to test database connection
     await db.query.clients.findMany({ limit: 1 });
-    return true;
+    return { healthy: true };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Database health check failed:", error);
-    return false;
+    return { healthy: false, error: errorMessage };
   }
 }
