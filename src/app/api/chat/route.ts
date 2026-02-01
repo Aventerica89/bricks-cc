@@ -92,9 +92,10 @@ async function executeActions(
     try {
       switch (action.type) {
         case "bricks_edit":
-          // Call Bricks API to apply edit
+          // Call Bricks API to apply edit (server-to-server)
+          const internalUrl = process.env.INTERNAL_API_URL || "http://localhost:3000";
           const bricksResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL}/api/bricks/edit`,
+            `${internalUrl}/api/bricks/edit`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -115,9 +116,9 @@ async function executeActions(
           break;
 
         case "basecamp_create_todo":
-          // Call Basecamp API to create todo
+          // Call Basecamp API to create todo (server-to-server)
           const basecampResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL}/api/basecamp/sync`,
+            `${internalUrl}/api/basecamp/sync`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
