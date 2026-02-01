@@ -56,7 +56,7 @@ export function validateChatRequest(
     return { valid: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { valid: false, error: error.errors[0].message };
+      return { valid: false, error: error.issues[0]?.message || "Validation failed" };
     }
     return { valid: false, error: "Invalid request body" };
   }
@@ -73,7 +73,7 @@ export function validateBricksEditRequest(
     return { valid: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { valid: false, error: error.errors[0].message };
+      return { valid: false, error: error.issues[0]?.message || "Validation failed" };
     }
     return { valid: false, error: "Invalid request body" };
   }
@@ -92,7 +92,7 @@ export function validateFeedbackRequest(
     return { valid: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { valid: false, error: error.errors[0].message };
+      return { valid: false, error: error.issues[0]?.message || "Validation failed" };
     }
     return { valid: false, error: "Invalid request body" };
   }
