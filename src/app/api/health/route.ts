@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { sql } from "drizzle-orm";
+import { clients } from "@/db/schema";
 
 /**
  * Health check endpoint for monitoring and uptime checks
@@ -53,7 +53,7 @@ export async function GET() {
 async function checkDatabase(): Promise<boolean> {
   try {
     // Simple query to test database connection
-    await db.get(sql`SELECT 1 as result`);
+    await db.query.clients.findMany({ limit: 1 });
     return true;
   } catch (error) {
     console.error("Database health check failed:", error);
