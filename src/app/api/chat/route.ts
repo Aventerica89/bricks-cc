@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { chatMessages } from "@/db/schema";
 import { processWithClaude, buildContextString } from "@/lib/claude-cli";
 import { buildContext } from "@/lib/context";
-import { validateChatRequest } from "@/utils/validators";
+import { validateChatRequest, sanitizeInput } from "@/utils/validators";
 import { SYSTEM_PROMPTS, parseActions } from "@/utils/prompt-templates";
 import { generateId } from "@/utils/formatting";
 import type { ChatResponse, ChatAction } from "@/types/chat";
@@ -46,14 +46,14 @@ export async function POST(request: NextRequest) {
       claudeResponse.response
     );
 
-    // Store in database
+    // Store in database (sanitize user input to prevent XSS)
     const messageId = generateId();
     await db.insert(chatMessages).values({
       id: messageId,
       clientId,
       siteId,
-      userMessage: message,
-      claudeResponse: responseText,
+      userMessage: sanitizeInput(message),
+      claudeResponse: sanitizeInput(responseText),
       metadata: {
         tokensUsed: claudeResponse.tokensUsed,
         executionTime: claudeResponse.executionTime,

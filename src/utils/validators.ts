@@ -1,4 +1,5 @@
 import { z } from "zod";
+import DOMPurify from "isomorphic-dompurify";
 import type { ChatRequest } from "@/types/chat";
 import type { BricksEditRequest } from "@/types/bricks";
 import type { ClientFeedbackRequest } from "@/types/client";
@@ -98,15 +99,23 @@ export function validateFeedbackRequest(
 }
 
 /**
- * Sanitize user input to prevent XSS
+ * Sanitize user input to prevent XSS using DOMPurify
  */
 export function sanitizeInput(input: string): string {
-  return input
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: ["b", "i", "em", "strong", "p", "br", "ul", "ol", "li"],
+    ALLOWED_ATTR: [],
+  });
+}
+
+/**
+ * Sanitize HTML content (for rich text)
+ */
+export function sanitizeHtml(html: string): string {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ["b", "i", "em", "strong", "p", "br", "ul", "ol", "li", "a", "code", "pre"],
+    ALLOWED_ATTR: ["href", "title"],
+  });
 }
 
 /**

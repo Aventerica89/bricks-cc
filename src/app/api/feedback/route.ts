@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { clientFeedback, clientSites, basecampSync } from "@/db/schema";
 import { createBasecampClient } from "@/lib/basecamp";
-import { validateFeedbackRequest } from "@/utils/validators";
+import { validateFeedbackRequest, sanitizeInput } from "@/utils/validators";
 import { generateId } from "@/utils/formatting";
 import { eq, desc, and } from "drizzle-orm";
 import type { ClientFeedbackResponse } from "@/types/client";
@@ -22,13 +22,13 @@ export async function POST(request: NextRequest) {
 
     const feedbackId = generateId();
 
-    // Insert feedback
+    // Insert feedback (sanitize message to prevent XSS)
     await db.insert(clientFeedback).values({
       id: feedbackId,
       clientId,
       siteId,
       feedbackType,
-      message,
+      message: sanitizeInput(message),
       attachments,
       status: "pending",
     });
