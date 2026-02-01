@@ -113,13 +113,13 @@ async function executeActions(
   siteId: string
 ): Promise<ChatAction[]> {
   const results: ChatAction[] = [];
+  const internalUrl = process.env.INTERNAL_API_URL || "http://localhost:3000";
 
   for (const action of actions) {
     try {
       switch (action.type) {
         case "bricks_edit":
           // Call Bricks API to apply edit (server-to-server)
-          const internalUrl = process.env.INTERNAL_API_URL || "http://localhost:3000";
           const bricksResponse = await fetch(
             `${internalUrl}/api/bricks/edit`,
             {
