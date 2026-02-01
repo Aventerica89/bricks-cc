@@ -242,8 +242,29 @@ export class BasecampClient {
 
 /**
  * Create a Basecamp client from environment variables
+ * Or from encrypted token (automatically decrypts)
  */
-export function createBasecampClient(): BasecampClient {
+export function createBasecampClient(options?: {
+  accountId?: number;
+  encryptedToken?: string;
+}): BasecampClient {
+  if (options?.encryptedToken && options?.accountId) {
+    // Use provided encrypted token (decrypt it)
+    const { decryptBasecampToken } = require("./secure-keys");
+    const accessToken = decryptBasecampToken(options.encryptedToken);
+
+    if (!accessToken) {
+      throw new Error("Failed to decrypt Basecamp token");
+    }
+
+    return new BasecampClient({
+      accountId: options.accountId,
+      accessToken,
+      userAgent: process.env.BASECAMP_USER_AGENT,
+    });
+  }
+
+  // Fallback to environment variables
   const accountId = process.env.BASECAMP_ACCOUNT_ID;
   const accessToken = process.env.BASECAMP_OAUTH_TOKEN;
 
