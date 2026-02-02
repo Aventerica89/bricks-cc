@@ -3,6 +3,9 @@
  * Analyzes ACSS JavaScript dump and generates Bricks element structure
  */
 
+import { nanoid } from "nanoid";
+import { CONFIDENCE_SCORING } from "./constants";
+
 export type StructureAgentInput = {
   acssJsDump?: Record<string, unknown>;
   containerGridCode?: string;
@@ -56,19 +59,23 @@ export class StructureAgent {
       warnings.push("No reference scenarios available - using default template");
     }
 
-    // Calculate confidence (MVP: simple heuristic)
-    let confidence = 0.6; // Base confidence
-    if (input.acssJsDump) confidence += 0.1;
-    if (input.containerGridCode) confidence += 0.1;
+    // Calculate confidence using predefined constants
+    let confidence = CONFIDENCE_SCORING.BASE_CONFIDENCE;
+    if (input.acssJsDump) {
+      confidence += CONFIDENCE_SCORING.ACSS_JS_DUMP_BOOST;
+    }
+    if (input.containerGridCode) {
+      confidence += CONFIDENCE_SCORING.CONTAINER_GRID_BOOST;
+    }
     if (input.referenceScenarios && input.referenceScenarios.length > 0) {
-      confidence += 0.2;
+      confidence += CONFIDENCE_SCORING.REFERENCE_SCENARIOS_BOOST;
     }
 
     const executionTime = Date.now() - startTime;
 
     return {
       success: true,
-      confidence: Math.min(confidence, 1.0),
+      confidence: Math.min(confidence, CONFIDENCE_SCORING.MAX_CONFIDENCE),
       structure,
       reasoning,
       warnings,
@@ -85,7 +92,7 @@ export class StructureAgent {
     // In production, this would be much more sophisticated
 
     return {
-      id: `container_${Date.now()}`,
+      id: `container_${nanoid(12)}`,
       name: "container",
       label: "Container",
       settings: {
@@ -94,7 +101,7 @@ export class StructureAgent {
       },
       children: [
         {
-          id: `section_${Date.now()}`,
+          id: `section_${nanoid(12)}`,
           name: "section",
           label: "Section",
           settings: {
@@ -104,7 +111,7 @@ export class StructureAgent {
           children: input.description
             ? [
                 {
-                  id: `heading_${Date.now()}`,
+                  id: `heading_${nanoid(12)}`,
                   name: "heading",
                   label: "Heading",
                   settings: {

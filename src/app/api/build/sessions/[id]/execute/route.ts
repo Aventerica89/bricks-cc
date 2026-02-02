@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { buildSessions, lessonScenarios } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { structureAgent } from "@/lib/agents/structure-agent";
+import { CONFIDENCE_SCORING } from "@/lib/agents/constants";
 
 // POST /api/build/sessions/[id]/execute - Execute agents for build session
 export async function POST(
@@ -70,7 +71,9 @@ export async function POST(
         agentOutputs: {
           structure: result,
         },
-        status: result.confidence > 0.7 ? "review" : "in_progress",
+        status: result.confidence >= CONFIDENCE_SCORING.AUTO_REVIEW_THRESHOLD
+          ? "review"
+          : "in_progress",
         updatedAt: new Date(),
       })
       .where(eq(buildSessions.id, id))
