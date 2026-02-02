@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { lessons } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { updateLessonSchema } from "@/utils/validators";
+import { ZodError } from "zod";
 
 // GET /api/teaching/lessons/[id] - Get single lesson
 export async function GET(
@@ -43,14 +45,17 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    // Validate input with Zod schema
+    const validated = updateLessonSchema.parse(body);
+
     const [updated] = await db
       .update(lessons)
       .set({
-        title: body.title,
-        description: body.description,
-        category: body.category,
-        status: body.status,
-        orderIndex: body.orderIndex,
+        title: validated.title,
+        description: validated.description,
+        category: validated.category,
+        status: validated.status,
+        orderIndex: validated.orderIndex,
         updatedAt: new Date(),
       })
       .where(eq(lessons.id, id))
@@ -65,6 +70,23 @@ export async function PUT(
 
     return NextResponse.json({ lesson: updated });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: error.issues
+        },
+        { status: 400 }
+      );
+    }
+
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
     console.error("Error updating lesson:", error);
     return NextResponse.json(
       { error: "Failed to update lesson" },
