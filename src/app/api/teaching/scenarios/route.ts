@@ -9,13 +9,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const lessonId = searchParams.get("lessonId");
 
-    let query = db.select().from(lessonScenarios);
-
-    if (lessonId) {
-      query = query.where(eq(lessonScenarios.lessonId, lessonId));
-    }
-
-    const scenarios = await query;
+    const scenarios = lessonId
+      ? await db
+          .select()
+          .from(lessonScenarios)
+          .where(eq(lessonScenarios.lessonId, lessonId))
+      : await db.select().from(lessonScenarios);
 
     return NextResponse.json({ scenarios });
   } catch (error) {

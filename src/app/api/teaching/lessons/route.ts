@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { lessons, type NewLesson } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 // GET /api/teaching/lessons - List all lessons
 export async function GET(request: NextRequest) {
@@ -10,22 +10,36 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category");
     const status = searchParams.get("status");
 
-    let query = db.select().from(lessons);
+    // Build query conditionally
+    let allLessons;
 
-    // Apply filters if provided
-    if (category) {
-      query = query.where(
-        eq(lessons.category, category as "container-grids" | "media-queries" | "plugin-resources" | "acss-docs")
-      );
+    if (category && status) {
+      allLessons = await db
+        .select()
+        .from(lessons)
+        .where(and(
+          eq(lessons.category, category as any),
+          eq(lessons.status, status as any)
+        ))
+        .orderBy(desc(lessons.createdAt));
+    } else if (category) {
+      allLessons = await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.category, category as any))
+        .orderBy(desc(lessons.createdAt));
+    } else if (status) {
+      allLessons = await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.status, status as any))
+        .orderBy(desc(lessons.createdAt));
+    } else {
+      allLessons = await db
+        .select()
+        .from(lessons)
+        .orderBy(desc(lessons.createdAt));
     }
-
-    if (status) {
-      query = query.where(
-        eq(lessons.status, status as "draft" | "published" | "archived")
-      );
-    }
-
-    const allLessons = await query.orderBy(desc(lessons.createdAt));
 
     return NextResponse.json({ lessons: allLessons });
   } catch (error) {

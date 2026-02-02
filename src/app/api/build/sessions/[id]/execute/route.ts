@@ -7,10 +7,10 @@ import { structureAgent } from "@/lib/agents/structure-agent";
 // POST /api/build/sessions/[id]/execute - Execute agents for build session
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Get the build session
     const [session] = await db

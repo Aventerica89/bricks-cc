@@ -6,10 +6,10 @@ import { eq } from "drizzle-orm";
 // GET /api/teaching/lessons/[id] - Get single lesson
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const [lesson] = await db
       .select()
@@ -37,10 +37,10 @@ export async function GET(
 // PUT /api/teaching/lessons/[id] - Update lesson
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     const [updated] = await db
@@ -76,10 +76,10 @@ export async function PUT(
 // DELETE /api/teaching/lessons/[id] - Archive lesson
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Soft delete by setting status to archived
     const [archived] = await db
