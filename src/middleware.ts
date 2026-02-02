@@ -1,26 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const ADMIN_PIN = process.env.ADMIN_PIN || "1234";
+
+// Routes that require PIN authentication
+const PROTECTED_ROUTES = ["/teaching", "/build", "/agents", "/content"];
+
 /**
- * Middleware to enforce HTTPS in production
- * Redirects HTTP requests to HTTPS
+ * Middleware to enforce HTTPS in production and PIN authentication
  */
 export function middleware(request: NextRequest) {
-  // Only enforce HTTPS in production
-  if (process.env.NODE_ENV !== "production") {
-    return NextResponse.next();
+  const { pathname } = request.nextUrl;
+
+  // 1. HTTPS enforcement (production only)
+  if (process.env.NODE_ENV === "production") {
+    const proto = request.headers.get("x-forwarded-proto");
+    const isHttps = proto === "https" || request.nextUrl.protocol === "https:";
+
+    if (!isHttps) {
+      const httpsUrl = new URL(request.url);
+      httpsUrl.protocol = "https:";
+      return NextResponse.redirect(httpsUrl, 301);
+    }
   }
 
-  // Check if request is already HTTPS
-  const proto = request.headers.get("x-forwarded-proto");
-  const isHttps = proto === "https" || request.nextUrl.protocol === "https:";
+  // 2. PIN authentication for protected routes
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
 
-  if (!isHttps) {
-    // Redirect to HTTPS
-    const httpsUrl = new URL(request.url);
-    httpsUrl.protocol = "https:";
+  if (isProtectedRoute) {
+    const pinCookie = request.cookies.get("admin_pin");
+    const pinHeader = request.headers.get("x-admin-pin");
+    const providedPin = pinCookie?.value || pinHeader;
 
-    return NextResponse.redirect(httpsUrl, 301); // Permanent redirect
+    if (providedPin !== ADMIN_PIN) {
+      // For API routes, return 401
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json(
+          { error: "Unauthorized: Invalid or missing PIN" },
+          { status: 401 }
+        );
+      }
+
+      // For pages, redirect to PIN entry
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/pin";
+      url.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();
