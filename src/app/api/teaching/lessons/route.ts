@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 import {
   createLessonSchema,
   generateLessonId,
-} from "@/utils/validators";
+} from "@/utils/teaching-validators";
 
 // GET /api/teaching/lessons - List all lessons
 export async function GET(request: NextRequest) {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { lessons } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { updateLessonSchema } from "@/utils/validators";
+import { updateLessonSchema } from "@/utils/teaching-validators";
 import { ZodError } from "zod";
 
 // GET /api/teaching/lessons/[id] - Get single lesson

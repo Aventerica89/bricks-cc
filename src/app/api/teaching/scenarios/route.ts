@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { lessonScenarios, type NewLessonScenario } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { createScenarioSchema, generateScenarioId } from "@/utils/validators";
+import { createScenarioSchema, generateScenarioId } from "@/utils/teaching-validators";
 import { ZodError } from "zod";
 
 // GET /api/teaching/scenarios - List scenarios (optionally filtered by lessonId)
