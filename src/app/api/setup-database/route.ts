@@ -1,17 +1,51 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sql } from "drizzle-orm";
 
 /**
- * ONE-TIME DATABASE SETUP ENDPOINT
+ * SECURE ONE-TIME DATABASE SETUP ENDPOINT
  *
- * Visit this URL once to create all required tables:
- * https://your-app.vercel.app/api/setup-database
+ * IMPORTANT: This endpoint requires authentication to prevent unauthorized access.
+ *
+ * Usage:
+ *   POST /api/setup-database
+ *   Headers: { "x-setup-token": "your-setup-token" }
+ *
+ * Setup:
+ *   1. Set DB_SETUP_TOKEN environment variable in Vercel
+ *   2. Make POST request with matching token in x-setup-token header
+ *   3. Remove DB_SETUP_TOKEN from environment variables after setup
  *
  * This endpoint creates the teaching system tables if they don't exist.
  * Safe to run multiple times - it will skip tables that already exist.
  */
-export async function GET() {
+export async function POST(request: NextRequest) {
+  // Verify setup token
+  const setupToken = process.env.DB_SETUP_TOKEN;
+
+  if (!setupToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Database setup is disabled",
+        message: "DB_SETUP_TOKEN environment variable is not set. This endpoint is only available during initial setup.",
+      },
+      { status: 403 }
+    );
+  }
+
+  const providedToken = request.headers.get("x-setup-token");
+
+  if (!providedToken || providedToken !== setupToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Unauthorized",
+        message: "Invalid or missing setup token. Provide the DB_SETUP_TOKEN value in the x-setup-token header.",
+      },
+      { status: 401 }
+    );
+  }
   try {
     // Create all teaching system tables
     await db.run(sql`
@@ -131,9 +165,9 @@ export async function GET() {
         "visual_comparisons",
       ],
       next_steps: [
-        "Go back to /teaching",
-        "Try creating a lesson",
-        "Delete this endpoint file after setup (src/app/api/setup-database/route.ts)",
+        "SECURITY: Remove DB_SETUP_TOKEN from Vercel environment variables to disable this endpoint",
+        "Go to /teaching and try creating a lesson",
+        "Optionally delete this endpoint file (src/app/api/setup-database/route.ts)",
       ],
     });
   } catch (error) {

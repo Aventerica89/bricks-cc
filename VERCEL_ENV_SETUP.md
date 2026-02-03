@@ -16,9 +16,10 @@
 | `ADMIN_PIN` | Your secure PIN | Use a strong PIN (4+ digits), NOT 1234 |
 | `TURSO_DATABASE_URL` | `libsql://[your-db].turso.io` | Get from Turso dashboard |
 | `TURSO_AUTH_TOKEN` | Your Turso token | Get from Turso dashboard |
-| `ENCRYPTION_KEY` | Generate below | 64-character hex string |
-| `NEXT_PUBLIC_APP_URL` | Your production URL | e.g., `https://bricks-cc.vercel.app` |
-| `INTERNAL_API_URL` | Same as above | e.g., `https://bricks-cc.vercel.app` |
+| `ENCRYPTION_KEY` | Generate with command below | 64-character hex string |
+| `DB_SETUP_TOKEN` | Random secure token | **Temporary** - for initial database setup only |
+| `NEXT_PUBLIC_APP_URL` | Your production URL | e.g., `https://your-app.vercel.app` |
+| `INTERNAL_API_URL` | Same as above | e.g., `https://your-app.vercel.app` |
 
 5. **Select all environments** for each variable:
    - ✅ Production
@@ -74,37 +75,35 @@ turso db tokens create bricks-cc
 If you prefer using the CLI, run the setup script:
 
 ```bash
-cd /home/user/bricks-cc
 ./setup-vercel-env.sh
 ```
 
 This will:
-1. Login to Vercel
-2. Link your project
-3. Prompt for values
-4. Set all environment variables automatically
+1. Use npx vercel (no global install needed)
+2. Login and link your project
+3. Prompt for values interactively (no shell history exposure)
+4. Set all environment variables securely
 
 ---
 
 ## Option 3: Manual CLI Setup
 
 ```bash
-# Login to Vercel
-vercel login
+# Use npx to avoid global install
+npx vercel login
+npx vercel link
 
-# Link project
-vercel link
-
-# Set environment variables
-vercel env add ADMIN_PIN
-vercel env add TURSO_DATABASE_URL
-vercel env add TURSO_AUTH_TOKEN
-vercel env add ENCRYPTION_KEY
-vercel env add NEXT_PUBLIC_APP_URL
-vercel env add INTERNAL_API_URL
+# Set environment variables (CLI will prompt interactively)
+npx vercel env add ADMIN_PIN
+npx vercel env add TURSO_DATABASE_URL
+npx vercel env add TURSO_AUTH_TOKEN
+npx vercel env add ENCRYPTION_KEY
+npx vercel env add DB_SETUP_TOKEN
+npx vercel env add NEXT_PUBLIC_APP_URL
+npx vercel env add INTERNAL_API_URL
 
 # Deploy
-vercel --prod
+npx vercel --prod
 ```
 
 ---
@@ -118,6 +117,38 @@ After adding environment variables and redeploying:
 3. Try accessing `/teaching` - it should redirect to PIN entry
 4. Enter your PIN
 5. You should see the teaching dashboard
+
+---
+
+## Database Setup (Required)
+
+After deploying with environment variables, you need to create the database tables. Choose one method:
+
+### Method 1: Secure API Endpoint (Recommended)
+
+```bash
+# Make POST request with your DB_SETUP_TOKEN
+curl -X POST https://your-app.vercel.app/api/setup-database \
+  -H "x-setup-token: YOUR_DB_SETUP_TOKEN"
+```
+
+You'll see a success message with the list of created tables.
+
+**IMPORTANT: After setup, remove `DB_SETUP_TOKEN` from Vercel environment variables for security.**
+
+### Method 2: Manual SQL Execution
+
+1. Copy the SQL from `setup-tables.sql` in the repository
+2. Go to Turso dashboard: https://turso.tech/app
+3. Select your database
+4. Execute the SQL in the query console
+
+### Method 3: Use Turso CLI
+
+```bash
+# From your project directory
+turso db shell your-database-name < setup-tables.sql
+```
 
 ---
 

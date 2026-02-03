@@ -4,14 +4,29 @@ echo "========================================="
 echo "Vercel Environment Variables Setup"
 echo "========================================="
 echo ""
+echo "⚠️  RECOMMENDED: Use Vercel Dashboard UI instead"
+echo "   https://vercel.com/dashboard → Settings → Environment Variables"
+echo ""
+echo "This script will prompt Vercel CLI to ask for each value interactively."
+echo "Your credentials will NOT be stored in shell history."
+echo ""
+
+# Check if npx is available (safer than global install)
+if ! command -v npx &> /dev/null; then
+    echo "❌ npx not found. Please install Node.js first."
+    exit 1
+fi
+
+# Use npx instead of global install
+VERCEL_CMD="npx vercel"
 
 # Login to Vercel first
 echo "Step 1: Login to Vercel..."
-vercel login
+$VERCEL_CMD login
 
 echo ""
 echo "Step 2: Link to your project..."
-vercel link
+$VERCEL_CMD link
 
 echo ""
 echo "Step 3: Setting up environment variables..."
@@ -19,56 +34,59 @@ echo ""
 
 # Generate encryption key
 ENCRYPTION_KEY=$(openssl rand -hex 32)
-echo "Generated ENCRYPTION_KEY: $ENCRYPTION_KEY"
-
-# Prompt for PIN
+echo "✅ Generated ENCRYPTION_KEY (save this securely):"
+echo "   $ENCRYPTION_KEY"
 echo ""
-read -p "Enter your ADMIN_PIN (secure 4+ digits): " ADMIN_PIN
-read -p "Enter your TURSO_DATABASE_URL: " TURSO_DATABASE_URL
-read -p "Enter your TURSO_AUTH_TOKEN: " TURSO_AUTH_TOKEN
+
+# Get production URL (non-sensitive, ok to prompt)
 read -p "Enter your production URL (e.g., https://your-app.vercel.app): " APP_URL
 
 echo ""
-echo "Setting environment variables for Production, Preview, and Development..."
+echo "Setting environment variables..."
+echo "Vercel CLI will prompt you for each value interactively."
+echo "This prevents secrets from appearing in shell history."
 echo ""
 
-# Set ADMIN_PIN
-echo "$ADMIN_PIN" | vercel env add ADMIN_PIN production
-echo "$ADMIN_PIN" | vercel env add ADMIN_PIN preview
-echo "$ADMIN_PIN" | vercel env add ADMIN_PIN development
+# Use vercel env add without piping - it will prompt interactively
+echo "Setting ADMIN_PIN..."
+$VERCEL_CMD env add ADMIN_PIN production preview development
 
-# Set TURSO_DATABASE_URL
-echo "$TURSO_DATABASE_URL" | vercel env add TURSO_DATABASE_URL production
-echo "$TURSO_DATABASE_URL" | vercel env add TURSO_DATABASE_URL preview
-echo "$TURSO_DATABASE_URL" | vercel env add TURSO_DATABASE_URL development
+echo ""
+echo "Setting TURSO_DATABASE_URL..."
+$VERCEL_CMD env add TURSO_DATABASE_URL production preview development
 
-# Set TURSO_AUTH_TOKEN
-echo "$TURSO_AUTH_TOKEN" | vercel env add TURSO_AUTH_TOKEN production
-echo "$TURSO_AUTH_TOKEN" | vercel env add TURSO_AUTH_TOKEN preview
-echo "$TURSO_AUTH_TOKEN" | vercel env add TURSO_AUTH_TOKEN development
+echo ""
+echo "Setting TURSO_AUTH_TOKEN..."
+$VERCEL_CMD env add TURSO_AUTH_TOKEN production preview development
 
-# Set ENCRYPTION_KEY
-echo "$ENCRYPTION_KEY" | vercel env add ENCRYPTION_KEY production
-echo "$ENCRYPTION_KEY" | vercel env add ENCRYPTION_KEY preview
-echo "$ENCRYPTION_KEY" | vercel env add ENCRYPTION_KEY development
+echo ""
+echo "Setting ENCRYPTION_KEY (paste the value shown above)..."
+echo "Value: $ENCRYPTION_KEY"
+$VERCEL_CMD env add ENCRYPTION_KEY production preview development
 
-# Set NEXT_PUBLIC_APP_URL
-echo "$APP_URL" | vercel env add NEXT_PUBLIC_APP_URL production
-echo "$APP_URL" | vercel env add NEXT_PUBLIC_APP_URL preview
+echo ""
+echo "Setting NEXT_PUBLIC_APP_URL (enter: $APP_URL)..."
+$VERCEL_CMD env add NEXT_PUBLIC_APP_URL production preview
 
-# Set INTERNAL_API_URL
-echo "$APP_URL" | vercel env add INTERNAL_API_URL production
-echo "$APP_URL" | vercel env add INTERNAL_API_URL preview
-echo "$APP_URL" | vercel env add INTERNAL_API_URL development
+echo ""
+echo "Setting INTERNAL_API_URL (enter: $APP_URL)..."
+$VERCEL_CMD env add INTERNAL_API_URL production preview development
+
+echo ""
+echo "Setting DB_SETUP_TOKEN (one-time database setup token)..."
+echo "Generate a random token or use your ADMIN_PIN..."
+$VERCEL_CMD env add DB_SETUP_TOKEN production
 
 echo ""
 echo "========================================="
 echo "✅ Environment variables set successfully!"
 echo "========================================="
 echo ""
-echo "Your ENCRYPTION_KEY (save this): $ENCRYPTION_KEY"
+echo "IMPORTANT - Save these securely:"
+echo "  ENCRYPTION_KEY: $ENCRYPTION_KEY"
 echo ""
 echo "Next steps:"
-echo "1. Redeploy your project: vercel --prod"
-echo "2. Or deploy via Vercel dashboard"
+echo "  1. Redeploy: npx vercel --prod"
+echo "  2. Run database setup (see TROUBLESHOOTING.md)"
+echo "  3. After setup, remove DB_SETUP_TOKEN from Vercel dashboard"
 echo ""
