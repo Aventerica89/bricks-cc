@@ -30,7 +30,9 @@ export default function NewLessonPage() {
         const { lesson } = await response.json();
         router.push(`/teaching/lessons/${lesson.id}`);
       } else {
-        alert("Failed to create lesson");
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        alert(`Failed to create lesson: ${errorData.error || "Unknown error"}\n${errorData.details ? JSON.stringify(errorData.details) : ""}`);
       }
     } catch (error) {
       console.error("Error creating lesson:", error);

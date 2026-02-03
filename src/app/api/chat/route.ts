@@ -10,6 +10,9 @@ import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import type { ChatResponse, ChatAction } from "@/types/chat";
 
+// Force Node.js runtime (required for child_process in claude-cli.ts)
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   try {
     // Validate CSRF token

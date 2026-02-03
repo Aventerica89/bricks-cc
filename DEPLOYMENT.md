@@ -132,6 +132,19 @@ vercel --prod
 
 ### Troubleshooting
 
+#### Build Fails with "Node.js module not supported in Edge Runtime"
+
+If you see errors about `child_process` or other Node.js modules:
+
+**Cause:** Some routes require Node.js runtime (not Edge Runtime) due to Claude CLI integration.
+
+**Solution:** Already fixed! The `/api/chat` route has `export const runtime = "nodejs"` which forces Node.js runtime.
+
+If you add new routes that use `claude-cli.ts`, add this line:
+```typescript
+export const runtime = "nodejs";
+```
+
 #### Build Fails with "TURSO_DATABASE_URL not set"
 
 This is expected during build. The database connection is only used at runtime, not during build.
