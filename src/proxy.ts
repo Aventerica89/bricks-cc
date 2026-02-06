@@ -11,56 +11,25 @@ if (!ADMIN_PIN) {
 
 /**
  * Timing-safe string comparison to prevent timing attacks
- * Uses subtle crypto API which works in Edge Runtime
+ * Constant-time comparison that doesn't leak length information
  */
-async function timingSafeCompare(a: string, b: string): Promise<boolean> {
-  try {
-    // Ensure both strings are the same length to prevent timing attacks
-    if (a.length !== b.length) {
-      return false;
-    }
+function timingSafeCompare(a: string, b: string): boolean {
+  // Pad shorter string to prevent length leakage
+  const maxLen = Math.max(a.length, b.length);
+  const aPadded = a.padEnd(maxLen, '\0');
+  const bPadded = b.padEnd(maxLen, '\0');
 
-    const encoder = new TextEncoder();
-    const aBytes = encoder.encode(a);
-    const bBytes = encoder.encode(b);
+  let result = 0;
 
-    // Use Web Crypto API (works in Edge Runtime)
-    const aKey = await crypto.subtle.importKey(
-      "raw",
-      aBytes,
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
-
-    const bKey = await crypto.subtle.importKey(
-      "raw",
-      bBytes,
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
-
-    const aSignature = await crypto.subtle.sign("HMAC", aKey, new Uint8Array(1));
-    const bSignature = await crypto.subtle.sign("HMAC", bKey, new Uint8Array(1));
-
-    // Compare signatures in constant time
-    if (aSignature.byteLength !== bSignature.byteLength) {
-      return false;
-    }
-
-    const aView = new Uint8Array(aSignature);
-    const bView = new Uint8Array(bSignature);
-
-    let result = 0;
-    for (let i = 0; i < aView.length; i++) {
-      result |= aView[i] ^ bView[i];
-    }
-
-    return result === 0;
-  } catch {
-    return false;
+  // Always compare full length regardless of actual lengths
+  for (let i = 0; i < maxLen; i++) {
+    result |= aPadded.charCodeAt(i) ^ bPadded.charCodeAt(i);
   }
+
+  // Also XOR the length difference to ensure constant time
+  result |= a.length ^ b.length;
+
+  return result === 0;
 }
 
 // Routes that require PIN authentication
@@ -94,7 +63,7 @@ export async function proxy(request: NextRequest) {
     const pinHeader = request.headers.get("x-admin-pin");
     const providedPin = pinCookie?.value || pinHeader;
 
-    const isValidPin = providedPin ? await timingSafeCompare(providedPin, ADMIN_PIN as string) : false;
+    const isValidPin = providedPin ? timingSafeCompare(providedPin, ADMIN_PIN as string) : false;
 
     if (!isValidPin) {
       // For API routes, return 401
