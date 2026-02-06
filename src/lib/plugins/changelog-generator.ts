@@ -34,6 +34,7 @@ export interface ChangelogGroup {
 
 /**
  * Parse a conventional commit message
+ * Supports breaking change marker (!)
  */
 function parseCommit(commitLine: string): ChangelogEntry | null {
   // Format: hash|date|author|subject|files
@@ -43,19 +44,20 @@ function parseCommit(commitLine: string): ChangelogEntry | null {
   const [hash, dateStr, author, subject, filesStr] = parts;
   const files = filesStr.split(",").filter(Boolean);
 
-  // Parse conventional commit format: type(scope): description
-  const conventionalRegex = /^(\w+)(?:\(([^)]+)\))?: (.+)$/;
+  // Parse conventional commit format: type(scope)!: description
+  // Supports optional breaking change marker (!)
+  const conventionalRegex = /^(\w+)(?:\(([^)]+)\))?(!?):\s*(.+)$/;
   const match = subject.match(conventionalRegex);
 
   if (!match) return null;
 
-  const [, type, scope, description] = match;
+  const [, type, scope, breakingMarker, description] = match;
 
   // Check for valid types
   const validTypes = ["feat", "fix", "docs", "chore", "refactor", "test", "perf", "style"];
   if (!validTypes.includes(type)) return null;
 
-  return {
+  const entry: ChangelogEntry = {
     type: type as ChangelogEntry["type"],
     scope,
     description,
@@ -64,17 +66,40 @@ function parseCommit(commitLine: string): ChangelogEntry | null {
     author,
     files,
   };
+
+  // Mark as breaking if ! is present
+  if (breakingMarker === "!") {
+    entry.breaking = "Breaking change detected";
+  }
+
+  return entry;
+}
+
+/**
+ * Sanitize git log parameters to prevent command injection
+ */
+function sanitizeGitParam(param: string): string {
+  // Only allow alphanumeric, spaces, dashes, and common date formats
+  const sanitized = param.replace(/[^a-zA-Z0-9\s\-:]/g, "");
+  if (sanitized !== param) {
+    throw new Error(`Invalid git parameter: ${param}`);
+  }
+  return sanitized;
 }
 
 /**
  * Get git commits since a specific date or commit
+ * Secured against command injection
  */
 export async function getCommitsSince(
   since: string = "1 week ago",
   cwd: string = process.cwd()
 ): Promise<ChangelogEntry[]> {
   try {
-    const command = `git log --since="${since}" --pretty=format:"%H|%aI|%an|%s" --name-only`;
+    // Sanitize input to prevent command injection
+    const safeSince = sanitizeGitParam(since);
+
+    const command = `git log --since="${safeSince}" --pretty=format:"%H|%aI|%an|%s" --name-only`;
     const { stdout } = await execAsync(command, { cwd });
 
     const commits: ChangelogEntry[] = [];

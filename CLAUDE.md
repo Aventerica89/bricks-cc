@@ -7,7 +7,7 @@ This is a Next.js 16 application that teaches AI agents to build Bricks Builder 
 ## Core Architecture
 
 ### Technology Stack
-- **Framework**: Next.js 16 with Turbopack
+- **Framework**: Next.js 15 with Turbopack
 - **Language**: TypeScript (strict mode)
 - **Database**: Turso (LibSQL) with Drizzle ORM
 - **AI**: Claude API via Anthropic SDK
@@ -105,21 +105,27 @@ type ValidatedInput = z.infer<typeof inputSchema>;
 
 ### Error Handling
 ```typescript
-// Consistent error structure
-type AgentError = {
-  code: string;
-  message: string;
-  details?: unknown;
-  recoverable: boolean;
-};
+// Custom error class with proper stack traces
+class AgentError extends Error {
+  constructor(
+    public code: string,
+    message: string,
+    public details?: unknown,
+    public recoverable: boolean = true
+  ) {
+    super(message);
+    this.name = 'AgentError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 
 // Always provide recovery guidance
-throw {
-  code: 'ACSS_PARSE_ERROR',
-  message: 'Failed to parse ACSS dump',
-  details: { line: 42, char: 15 },
-  recoverable: true,
-};
+throw new AgentError(
+  'ACSS_PARSE_ERROR',
+  'Failed to parse ACSS dump',
+  { line: 42, char: 15 },
+  true
+);
 ```
 
 ### Agent Development Pattern
