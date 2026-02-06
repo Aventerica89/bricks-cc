@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Next.js 16 application that teaches AI agents to build Bricks Builder components using structured lessons and scenarios. The system analyzes ACSS (Automatic CSS) patterns and generates proper Bricks component structures.
+This is a Next.js 15 application that teaches AI agents to build Bricks Builder components using structured lessons and scenarios. The system analyzes ACSS (Automatic CSS) patterns and generates proper Bricks component structures.
 
 ## Core Architecture
 
