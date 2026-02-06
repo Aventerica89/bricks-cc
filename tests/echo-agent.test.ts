@@ -96,20 +96,19 @@ async function testEchoAgent() {
   // Test 5: Invalid input (validation error)
   console.log("Test 5: Invalid input (validation test)");
   console.log("=======================================");
-  try {
-    const agent5 = new EchoAgent({ id: "test-echo-5" });
-    const result5 = await agent5.run({
-      message: "", // Empty message should fail validation
-      repeat: 1,
-      transform: "none",
-    });
+  const agent5 = new EchoAgent({ id: "test-echo-5" });
+  const result5 = await agent5.run({
+    message: "", // Empty message should fail validation
+    repeat: 1,
+    transform: "none",
+  });
 
-    console.log(`❌ Unexpected success: ${result5.success}`);
-  } catch (error) {
-    console.log("✅ Correctly caught validation error");
-    console.log(
-      `📝 Error: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
+  if (!result5.success && result5.errors && result5.errors.length > 0) {
+    console.log("✅ Correctly returned validation error");
+    console.log(`📝 Success: ${result5.success}`);
+    console.log(`📝 Errors: ${result5.errors.join(", ")}`);
+  } else {
+    console.log(`❌ Expected validation error but got success: ${result5.success}`);
   }
   console.log();
 

@@ -10,11 +10,14 @@ import { z } from "zod";
 
 /**
  * Standard agent execution result
+ *
+ * When success is true, data will contain the agent output.
+ * When success is false, data will be undefined and errors will contain details.
  */
 export interface AgentOutput<T = unknown> {
   success: boolean;
   confidence: number; // 0-1 scale
-  data: T;
+  data?: T;
   reasoning: string[];
   warnings: string[];
   errors?: string[];
@@ -214,8 +217,10 @@ export abstract class BaseAgent<TInput = unknown, TOutput = unknown> {
 
       // Check execution timeout
       const timeout = this.config.maxExecutionTime!;
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(
+      let timeoutId: NodeJS.Timeout | undefined;
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(
           () =>
             reject(
               new AgentError(
@@ -226,14 +231,19 @@ export abstract class BaseAgent<TInput = unknown, TOutput = unknown> {
               )
             ),
           timeout
-        )
-      );
+        );
+      });
 
       // Execute agent with timeout
       const data = await Promise.race([
         this.execute(input, context),
         timeoutPromise,
       ]);
+
+      // Clear timeout if execution completed before timeout
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
 
       // Calculate confidence
       const confidence = this.calculateConfidence(data, context);
@@ -285,7 +295,6 @@ export abstract class BaseAgent<TInput = unknown, TOutput = unknown> {
         return {
           success: false,
           confidence: 0,
-          data: {} as TOutput,
           reasoning: context.reasoning,
           warnings: context.warnings,
           errors: context.errors,
@@ -312,7 +321,6 @@ export abstract class BaseAgent<TInput = unknown, TOutput = unknown> {
       return {
         success: false,
         confidence: 0,
-        data: {} as TOutput,
         reasoning: context.reasoning,
         warnings: context.warnings,
         errors: context.errors,

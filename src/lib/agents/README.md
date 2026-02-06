@@ -57,7 +57,8 @@ export class MyAgent extends BaseAgent<MyInput, MyOutput> {
     context.reasoning.push("Starting execution");
 
     // Your agent logic here
-    const result = await this.processInput(input);
+    const result = input.field.toUpperCase();
+    context.reasoning.push(`Processed field: ${input.field} -> ${result}`);
 
     context.reasoning.push("Execution complete");
     return { result };
