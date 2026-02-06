@@ -6,7 +6,7 @@
  */
 
 import { z } from "zod";
-import { BaseAgent, AgentContext, AgentError } from "./base-agent";
+import { BaseAgent, AgentContext, AgentError, AgentConfig } from "./base-agent";
 
 /**
  * Input schema for Echo Agent
@@ -54,7 +54,7 @@ export interface EchoOutput {
  * ```
  */
 export class EchoAgent extends BaseAgent<EchoInput, EchoOutput> {
-  constructor(config: Partial<Parameters<typeof BaseAgent.prototype.constructor>[0]> = {}) {
+  constructor(config: Partial<AgentConfig> = {}) {
     super({
       type: "EchoAgent",
       minConfidence: 0.7,
