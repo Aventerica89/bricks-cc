@@ -5,12 +5,20 @@ Your lessons are missing because the production database tables haven't been cre
 ## Option 1: Use Setup Endpoint (Fastest ⚡)
 
 **Step 1:** Add temporary setup token to Vercel
-1. Go to: https://vercel.com/[your-team]/bricks-cc/settings/environment-variables
-2. Add new variable:
+1. Generate a secure random token:
+   ```bash
+   # On Linux/Mac:
+   openssl rand -hex 32
+
+   # On Windows (PowerShell):
+   -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 32 | % {[char]$_})
+   ```
+2. Go to: https://vercel.com/[your-team]/bricks-cc/settings/environment-variables
+3. Add new variable:
    - **Name:** `DB_SETUP_TOKEN`
-   - **Value:** `your-secure-random-token` (any random string, e.g., your ADMIN_PIN)
+   - **Value:** Use the secure random token generated above
    - **Environments:** Production
-3. Redeploy (or wait for auto-deploy)
+4. Redeploy (or wait for auto-deploy)
 
 **Step 2:** Run setup endpoint
 ```bash
