@@ -67,9 +67,9 @@ async function timingSafeCompare(a: string, b: string): Promise<boolean> {
 const PROTECTED_ROUTES = ["/teaching", "/build", "/agents", "/content"];
 
 /**
- * Middleware to enforce HTTPS in production and PIN authentication
+ * Proxy middleware to enforce HTTPS in production and PIN authentication
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. HTTPS enforcement (production only)
