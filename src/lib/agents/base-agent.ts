@@ -234,48 +234,50 @@ export abstract class BaseAgent<TInput = unknown, TOutput = unknown> {
         );
       });
 
-      // Execute agent with timeout
-      const data = await Promise.race([
-        this.execute(input, context),
-        timeoutPromise,
-      ]);
+      try {
+        // Execute agent with timeout
+        const data = await Promise.race([
+          this.execute(input, context),
+          timeoutPromise,
+        ]);
 
-      // Clear timeout if execution completed before timeout
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+        // Calculate confidence
+        const confidence = this.calculateConfidence(data, context);
+
+        // Check minimum confidence threshold
+        if (confidence < this.config.minConfidence!) {
+          context.warnings.push(
+            `Confidence ${confidence.toFixed(2)} below minimum threshold ${this.config.minConfidence}`
+          );
+        }
+
+        // Build output
+        const executionTime = Date.now() - startTime;
+        const output: AgentOutput<TOutput> = {
+          success: true,
+          confidence: Math.max(0, Math.min(1, confidence)),
+          data,
+          reasoning: context.reasoning,
+          warnings: context.warnings,
+          errors: context.errors.length > 0 ? context.errors : undefined,
+          metadata: {
+            agentType: this.config.type,
+            executionTime,
+            timestamp: Date.now(),
+            ...context.metadata,
+          },
+        };
+
+        // Log execution
+        this.logExecution(output);
+
+        return output;
+      } finally {
+        // Always clear timeout to prevent dangling timers
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
       }
-
-      // Calculate confidence
-      const confidence = this.calculateConfidence(data, context);
-
-      // Check minimum confidence threshold
-      if (confidence < this.config.minConfidence!) {
-        context.warnings.push(
-          `Confidence ${confidence.toFixed(2)} below minimum threshold ${this.config.minConfidence}`
-        );
-      }
-
-      // Build output
-      const executionTime = Date.now() - startTime;
-      const output: AgentOutput<TOutput> = {
-        success: true,
-        confidence: Math.max(0, Math.min(1, confidence)),
-        data,
-        reasoning: context.reasoning,
-        warnings: context.warnings,
-        errors: context.errors.length > 0 ? context.errors : undefined,
-        metadata: {
-          agentType: this.config.type,
-          executionTime,
-          timestamp: Date.now(),
-          ...context.metadata,
-        },
-      };
-
-      // Log execution
-      this.logExecution(output);
-
-      return output;
     } catch (error) {
       // Handle execution errors
       const executionTime = Date.now() - startTime;
