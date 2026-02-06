@@ -86,14 +86,12 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error in docs API:", error);
 
-    // Return generic error to client
+    // Return generic error to client (don't leak internal details)
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch documentation",
+        error: "Failed to fetch documentation",
+        message: "An error occurred while processing your request.",
       },
       { status: 500 }
     );
@@ -102,8 +100,42 @@ export async function GET(request: NextRequest) {
 
 /**
  * DELETE /api/docs - Clear documentation cache
+ *
+ * Requires authentication to prevent DoS attacks.
+ *
+ * Usage:
+ *   DELETE /api/docs
+ *   Headers: { "x-admin-token": "your-admin-token" }
+ *
+ * Setup:
+ *   Set DOCS_ADMIN_TOKEN environment variable
  */
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
+  // Verify admin token
+  const adminToken = process.env.DOCS_ADMIN_TOKEN;
+
+  if (!adminToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Cache clearing is disabled",
+      },
+      { status: 403 }
+    );
+  }
+
+  const providedToken = request.headers.get("x-admin-token");
+
+  if (!providedToken || providedToken !== adminToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Unauthorized",
+      },
+      { status: 401 }
+    );
+  }
+
   try {
     clearDocsCache();
 

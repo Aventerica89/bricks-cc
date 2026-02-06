@@ -8,6 +8,22 @@
  */
 
 import { z } from "zod";
+import * as cheerio from "cheerio";
+
+/**
+ * Custom error class that preserves HTTP status code
+ */
+class FetchError extends Error {
+  constructor(
+    message: string,
+    public statusCode?: number,
+    public isTimeout: boolean = false
+  ) {
+    super(message);
+    this.name = "FetchError";
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 
 /**
  * Documentation source configuration
@@ -162,16 +178,24 @@ async function withRetry<T>(
         break;
       }
 
-      // Don't retry on client errors (4xx) or validation errors
-      if (
-        lastError.message.includes("HTTP 4") ||
-        lastError.message.includes("Invalid") ||
-        lastError.message.includes("Unknown")
-      ) {
-        throw lastError;
+      // Don't retry on client errors (4xx) or timeout errors
+      if (error instanceof FetchError) {
+        // Don't retry on 4xx client errors (bad request, auth, not found, etc.)
+        if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+          throw error;
+        }
+        // Don't retry on timeout (let caller handle)
+        if (error.isTimeout) {
+          throw error;
+        }
       }
 
-      // Calculate exponential backoff delay
+      // Don't retry on validation errors
+      if (error instanceof z.ZodError) {
+        throw error;
+      }
+
+      // Calculate exponential backoff delay for retryable errors (5xx, network issues)
       const delay = Math.min(
         config.baseDelay * Math.pow(2, attempt),
         config.maxDelay
@@ -214,8 +238,9 @@ export async function fetchDocs(
   // Get source configuration
   const source = DOC_SOURCES[sourceId];
   if (!source) {
-    throw new Error(
-      `Unknown documentation source: ${sourceId}. Available sources: ${Object.keys(DOC_SOURCES).join(", ")}`
+    throw new FetchError(
+      `Unknown documentation source: ${sourceId}. Available sources: ${Object.keys(DOC_SOURCES).join(", ")}`,
+      400
     );
   }
 
@@ -251,8 +276,9 @@ export async function fetchDocs(
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}: ${response.statusText}`
+        throw new FetchError(
+          `HTTP ${response.status}: ${response.statusText}`,
+          response.status
         );
       }
 
@@ -266,17 +292,23 @@ export async function fetchDocs(
         title = json.title || title;
       } else {
         const html = await response.text();
-        // Basic HTML parsing - extract title and content
-        const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-        if (titleMatch) {
-          title = titleMatch[1].trim();
+
+        // Use cheerio for robust HTML parsing
+        const $ = cheerio.load(html);
+
+        // Extract title
+        const pageTitle = $("title").first().text().trim();
+        if (pageTitle) {
+          title = pageTitle;
         }
 
-        // Remove script tags and extract main content
-        content = html
-          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-          .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-          .replace(/<[^>]+>/g, " ")
+        // Remove script, style, and nav elements
+        $("script, style, nav, header, footer").remove();
+
+        // Extract text content from main content area (or body if no main)
+        const mainContent = $("main, article, .content, #content").first();
+        content = (mainContent.length > 0 ? mainContent : $("body"))
+          .text()
           .replace(/\s+/g, " ")
           .trim();
 
@@ -310,13 +342,22 @@ export async function fetchDocs(
     } catch (error) {
       clearTimeout(timeoutId);
 
+      // Re-throw FetchError as-is to preserve status code
+      if (error instanceof FetchError) {
+        throw error;
+      }
+
       if (error instanceof Error) {
         if (error.name === "AbortError") {
-          throw new Error(`Request timeout after ${timeout}ms`);
+          throw new FetchError(
+            `Request timeout after ${timeout}ms`,
+            undefined,
+            true
+          );
         }
-        throw new Error(`Failed to fetch docs: ${error.message}`);
+        throw new FetchError(`Failed to fetch docs: ${error.message}`);
       }
-      throw new Error("Failed to fetch documentation");
+      throw new FetchError("Failed to fetch documentation");
     }
   });
 
