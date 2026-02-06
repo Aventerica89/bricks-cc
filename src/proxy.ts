@@ -11,18 +11,23 @@ if (!ADMIN_PIN) {
 
 /**
  * Timing-safe string comparison to prevent timing attacks
- * Simple and fast implementation using constant-time comparison
+ * Constant-time comparison that doesn't leak length information
  */
 function timingSafeCompare(a: string, b: string): boolean {
-  // Ensure both strings are the same length to prevent timing attacks
-  if (a.length !== b.length) {
-    return false;
-  }
+  // Pad shorter string to prevent length leakage
+  const maxLen = Math.max(a.length, b.length);
+  const aPadded = a.padEnd(maxLen, '\0');
+  const bPadded = b.padEnd(maxLen, '\0');
 
   let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+
+  // Always compare full length regardless of actual lengths
+  for (let i = 0; i < maxLen; i++) {
+    result |= aPadded.charCodeAt(i) ^ bPadded.charCodeAt(i);
   }
+
+  // Also XOR the length difference to ensure constant time
+  result |= a.length ^ b.length;
 
   return result === 0;
 }

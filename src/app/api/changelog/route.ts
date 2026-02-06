@@ -33,12 +33,15 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    // Log detailed error server-side
     console.error("Error generating changelog:", error);
+
+    // Return generic error to client (security: don't leak implementation details)
     return NextResponse.json(
       {
         success: false,
         error: "Failed to generate changelog",
-        details: error instanceof Error ? error.message : String(error),
+        message: "An error occurred while processing your request. Please try again.",
       },
       { status: 500 }
     );
@@ -64,12 +67,15 @@ export async function POST(request: NextRequest) {
       content: result.content,
     });
   } catch (error) {
+    // Log detailed error server-side
     console.error("Error saving changelog:", error);
+
+    // Return generic error to client (security: don't leak implementation details)
     return NextResponse.json(
       {
         success: false,
         error: "Failed to save changelog",
-        details: error instanceof Error ? error.message : String(error),
+        message: "An error occurred while saving the changelog. Please try again.",
       },
       { status: 500 }
     );
