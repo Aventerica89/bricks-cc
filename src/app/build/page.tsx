@@ -1,7 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { PlusCircle, Play, Code2, Sparkles, BookOpen, History } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  PlusCircle,
+  Play,
+  Code2,
+  Sparkles,
+  BookOpen,
+  History,
+  Copy,
+  Download,
+  Check,
+  RotateCcw,
+} from "lucide-react";
 
 type Lesson = {
   id: string;
@@ -23,6 +34,7 @@ type BuildSession = {
   lessonId: string | null;
   scenarioId: string | null;
   status: string;
+  inputData: { description?: string } | null;
   agentOutputs: Record<string, unknown> | null;
   createdAt: string;
 };
@@ -48,6 +60,37 @@ export default function BuildPage() {
 
   // Session history
   const [recentSessions, setRecentSessions] = useState<BuildSession[]>([]);
+  const [copied, setCopied] = useState(false);
+
+  const copyJson = useCallback((json: Record<string, unknown>) => {
+    navigator.clipboard.writeText(JSON.stringify(json, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, []);
+
+  const downloadJson = useCallback(
+    (json: Record<string, unknown>, filename: string) => {
+      const blob = new Blob([JSON.stringify(json, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    []
+  );
+
+  const handleStartNew = useCallback(() => {
+    setResult(null);
+    setFormData({ description: "", acssJsDump: "", containerGridCode: "" });
+    setSelectedLessonId("");
+    setSelectedScenarioId("");
+    setSelectedScenario(null);
+    setShowNewSession(true);
+  }, []);
 
   // Load lessons on mount
   useEffect(() => {
@@ -294,21 +337,54 @@ export default function BuildPage() {
         {result && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Structure Agent Output
-                </h2>
-                {result.agentOutput.metadata.aiGenerated && (
-                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                    AI Generated
-                  </span>
-                )}
-                {!result.agentOutput.metadata.aiGenerated && (
-                  <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
-                    Template Fallback
-                  </span>
-                )}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-purple-600" />
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Structure Agent Output
+                  </h2>
+                  {result.agentOutput.metadata.aiGenerated ? (
+                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                      AI Generated
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
+                      Template Fallback
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => copyJson(result.agentOutput.structure)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    {copied ? (
+                      <Check className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                    {copied ? "Copied" : "Copy JSON"}
+                  </button>
+                  <button
+                    onClick={() =>
+                      downloadJson(
+                        result.agentOutput.structure,
+                        "bricks-structure.json"
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download
+                  </button>
+                  <button
+                    onClick={handleStartNew}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    New Session
+                  </button>
+                </div>
               </div>
 
               {/* Confidence */}
@@ -456,44 +532,61 @@ export default function BuildPage() {
                     structureOutput?.structure?.confidence;
                   const aiGenerated =
                     structureOutput?.structure?.metadata?.aiGenerated;
+                  const description =
+                    (session.inputData as { description?: string } | null)
+                      ?.description || "Untitled session";
 
                   return (
                     <div
                       key={session.id}
                       className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg"
                     >
-                      <div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {session.id.slice(0, 20)}...
-                        </span>
-                        <span
-                          className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-                            session.status === "review"
-                              ? "bg-blue-100 text-blue-700"
-                              : session.status === "approved"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {session.status}
-                        </span>
-                        {aiGenerated !== undefined && (
+                      <div className="min-w-0 flex-1 mr-4">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-sm font-medium text-gray-900 truncate">
+                            {description}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
                           <span
-                            className={`ml-1 text-xs px-2 py-0.5 rounded-full ${
-                              aiGenerated
-                                ? "bg-green-100 text-green-700"
-                                : "bg-orange-100 text-orange-700"
+                            className={`text-xs px-2 py-0.5 rounded-full ${
+                              session.status === "review"
+                                ? "bg-blue-100 text-blue-700"
+                                : session.status === "approved"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-gray-100 text-gray-600"
                             }`}
                           >
-                            {aiGenerated ? "AI" : "Template"}
+                            {session.status}
                           </span>
-                        )}
+                          {aiGenerated !== undefined && (
+                            <span
+                              className={`text-xs px-2 py-0.5 rounded-full ${
+                                aiGenerated
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-orange-100 text-orange-700"
+                              }`}
+                            >
+                              {aiGenerated ? "AI" : "Template"}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 shrink-0">
                         {confidence !== undefined && (
-                          <span className="text-sm text-purple-600 font-medium">
-                            {(confidence * 100).toFixed(0)}%
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                              <div
+                                className="bg-purple-600 h-1.5 rounded-full"
+                                style={{
+                                  width: `${confidence * 100}%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-sm text-purple-600 font-medium w-10 text-right">
+                              {(confidence * 100).toFixed(0)}%
+                            </span>
+                          </div>
                         )}
                         <span className="text-xs text-gray-500">
                           {new Date(session.createdAt).toLocaleDateString()}

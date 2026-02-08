@@ -8,6 +8,7 @@ import {
   Layers,
   ArrowUpRight,
   Activity,
+  Sparkles,
 } from "lucide-react";
 
 interface DashboardStats {
@@ -17,13 +18,32 @@ interface DashboardStats {
   totalBuildSessions: number;
 }
 
+interface RecentSession {
+  id: string;
+  status: string;
+  inputData: { description?: string } | null;
+  agentOutputs: {
+    structure?: {
+      confidence?: number;
+      metadata?: { aiGenerated?: boolean };
+    };
+  } | null;
+  createdAt: string;
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentSessions, setRecentSessions] = useState<RecentSession[]>([]);
 
   useEffect(() => {
     fetch("/api/dashboard/stats")
       .then((r) => r.json())
       .then(setStats)
+      .catch(console.error);
+
+    fetch("/api/build/sessions")
+      .then((r) => r.json())
+      .then((data) => setRecentSessions((data.sessions || []).slice(0, 5)))
       .catch(console.error);
   }, []);
 
@@ -64,7 +84,7 @@ export default function DashboardPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <QuickActionCard
             title="Teaching System"
             description="Create lessons and scenarios to train the AI agent"
@@ -78,6 +98,79 @@ export default function DashboardPage() {
             icon={<Code2 className="w-8 h-8 text-purple-600" />}
           />
         </div>
+
+        {/* Recent Activity */}
+        {recentSessions.length > 0 && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-gray-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Build Activity
+                </h2>
+              </div>
+              <Link
+                href="/build"
+                className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                View all
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {recentSessions.map((session) => {
+                const description =
+                  (session.inputData as { description?: string } | null)
+                    ?.description || "Untitled session";
+                const confidence =
+                  session.agentOutputs?.structure?.confidence;
+                const aiGenerated =
+                  session.agentOutputs?.structure?.metadata?.aiGenerated;
+
+                return (
+                  <div
+                    key={session.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="min-w-0 flex-1 mr-4">
+                      <span className="text-sm font-medium text-gray-900 truncate block">
+                        {description}
+                      </span>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {aiGenerated !== undefined && (
+                          <span
+                            className={`text-xs px-1.5 py-0.5 rounded ${
+                              aiGenerated
+                                ? "bg-green-100 text-green-700"
+                                : "bg-orange-100 text-orange-700"
+                            }`}
+                          >
+                            {aiGenerated ? "AI" : "Template"}
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-500">
+                          {new Date(session.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    {confidence !== undefined && (
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className="bg-purple-600 h-1.5 rounded-full"
+                            style={{ width: `${confidence * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-purple-600 w-8 text-right">
+                          {(confidence * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
