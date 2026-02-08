@@ -1,11 +1,11 @@
 /**
  * Structure Agent — AI-Powered Version
  *
- * Calls Claude CLI to generate Bricks element structures.
- * Falls back to basic template generation if CLI is unavailable.
+ * Calls the Anthropic API directly to generate Bricks element structures.
+ * Falls back to basic template generation if API key is unavailable.
  */
 
-import { execFileSync } from "child_process";
+import Anthropic from "@anthropic-ai/sdk";
 import { nanoid } from "nanoid";
 import { CONFIDENCE_SCORING } from "./constants";
 import {
@@ -44,8 +44,9 @@ export class StructureAgent {
     const warnings: string[] = [];
 
     // Try AI generation first
-    if (process.env.CLAUDE_CLI_ENABLED === "true") {
-      reasoning.push("Claude CLI enabled, attempting AI generation");
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (apiKey) {
+      reasoning.push("Anthropic API key found, attempting AI generation");
 
       try {
         const result = await this.generateWithClaude(
@@ -77,10 +78,10 @@ export class StructureAgent {
       }
     } else {
       reasoning.push(
-        "Claude CLI not enabled, using template generation"
+        "No ANTHROPIC_API_KEY set, using template generation"
       );
       warnings.push(
-        "Set CLAUDE_CLI_ENABLED=true for AI-powered generation"
+        "Set ANTHROPIC_API_KEY for AI-powered generation"
       );
     }
 
@@ -139,36 +140,24 @@ export class StructureAgent {
       reasoning.push("Container grid code provided, included in prompt");
     }
 
-    // Build the full prompt for the CLI
-    const fullPrompt = `${systemPrompt}\n\n---\n\n${userPrompt}`;
+    const client = new Anthropic();
 
-    // Call Claude CLI using execFileSync (no shell injection risk)
-    const response = execFileSync(
-      "claude",
-      ["--output-format", "json", "-p", fullPrompt],
-      {
-        encoding: "utf-8",
-        timeout: 60000,
-        env: { ...process.env },
-        maxBuffer: 1024 * 1024,
-      }
-    );
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
+    });
 
-    reasoning.push("Claude CLI returned response");
+    reasoning.push("Anthropic API returned response");
 
-    // Parse the CLI JSON envelope
-    let claudeText: string;
-    try {
-      const cliResponse = JSON.parse(response);
-      claudeText =
-        cliResponse.result ||
-        cliResponse.content ||
-        cliResponse.text ||
-        response;
-    } catch {
-      // If CLI response isn't JSON envelope, use raw
-      claudeText = response;
+    // Extract text from the response
+    const textBlock = message.content.find((b) => b.type === "text");
+    if (!textBlock || textBlock.type !== "text") {
+      throw new Error("No text content in API response");
     }
+
+    const claudeText = textBlock.text;
 
     // Extract the Bricks JSON from Claude's response
     const structure = extractJsonFromResponse(claudeText);

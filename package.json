@@ -25,6 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
     "@libsql/client": "^0.17.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.1.0",
