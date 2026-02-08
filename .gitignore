@@ -57,3 +57,4 @@ temp/
 
 # WordPress plugin build
 wordpress-plugin/*.zip
+.env*.local
