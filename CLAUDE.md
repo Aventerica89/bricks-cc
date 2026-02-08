@@ -376,6 +376,23 @@ Maintain these docs:
 - Zero security vulnerabilities
 - All core APIs documented
 
+## ACSS Documentation (MCP Server)
+
+The `acss-docs` MCP server provides structured access to the full ACSS v3.0 documentation (154 pages, 29 categories, 130+ CSS variables). **Use these tools instead of raw ACSS dumps** when you need class names, variables, or implementation guidance.
+
+| Tool | Purpose | Example |
+|------|---------|---------|
+| `search_acss_docs` | Fuzzy search across all docs | `query: "flexbox grid"` |
+| `get_acss_page` | Full page by slug | `slug: "buttons"` or `slug: "buttons-links/button-variables"` |
+| `list_acss_categories` | Browse all 29 categories | `include_pages: true` for full listing |
+| `get_acss_variables` | Search CSS custom properties | `search: "btn"`, `category: "spacing"` |
+
+**When to use:**
+- Generating Bricks structures — query relevant ACSS classes and variables first
+- CSS agent styling — look up exact variable names and defaults
+- Validating output — confirm classes exist in ACSS before using them
+- Teaching scenarios — pull real documentation examples
+
 ## Getting Help
 
 - **Documentation**: `/docs` directory
