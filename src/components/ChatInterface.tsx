@@ -20,8 +20,17 @@ export default function ChatInterface({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Fetch CSRF token on mount
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then((res) => res.json())
+      .then((data) => setCsrfToken(data.token))
+      .catch((err) => console.error("Failed to fetch CSRF token:", err));
+  }, []);
 
   // Load chat history on mount
   useEffect(() => {
@@ -83,9 +92,16 @@ export default function ChatInterface({
     setError(null);
 
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (csrfToken) {
+        headers["x-csrf-token"] = csrfToken;
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           clientId,
           siteId,

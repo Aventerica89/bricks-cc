@@ -56,18 +56,20 @@ export default function SiteManager({ clientId }: { clientId: string }) {
     fetchSites();
   }, [clientId]);
 
-  const fetchSites = async () => {
+  const fetchSites = async (showSpinner = true) => {
     try {
-      setLoading(true);
-      const res = await fetch(`/api/clients/${clientId}/sites`);
+      if (showSpinner) setLoading(true);
+      const res = await fetch(`/api/clients/${clientId}/sites`, {
+        cache: "no-store",
+      });
       if (!res.ok) throw new Error("Failed to fetch sites");
       const data = await res.json();
       setSites(data.sites);
     } catch (err) {
-      setError("Failed to load sites");
+      if (showSpinner) setError("Failed to load sites");
       console.error(err);
     } finally {
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     }
   };
 
@@ -98,8 +100,21 @@ export default function SiteManager({ clientId }: { clientId: string }) {
         throw new Error(data.error || "Failed to save site");
       }
 
+      const data = await res.json();
+
+      // Optimistic update: immediately add/update the site in state
+      if (isEdit) {
+        setSites((prev) =>
+          prev.map((s) => (s.id === editingSiteId ? data.site : s))
+        );
+      } else {
+        setSites((prev) => [...prev, data.site]);
+      }
+
       resetForm();
-      await fetchSites();
+
+      // Background re-fetch for consistency (no spinner)
+      fetchSites(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     } finally {
@@ -117,8 +132,12 @@ export default function SiteManager({ clientId }: { clientId: string }) {
 
       if (!res.ok) throw new Error("Failed to delete site");
 
+      // Optimistic removal
+      setSites((prev) => prev.filter((s) => s.id !== siteId));
       setDeleteConfirm(null);
-      await fetchSites();
+
+      // Background re-fetch for consistency (no spinner)
+      fetchSites(false);
     } catch (err) {
       setError("Failed to delete site");
       console.error(err);

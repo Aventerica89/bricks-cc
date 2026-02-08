@@ -72,6 +72,7 @@ export async function POST(
       basecampProjectId: basecampProjectId
         ? parseInt(basecampProjectId, 10)
         : null,
+      isActive: true,
     });
 
     const created = await db.query.clientSites.findFirst({

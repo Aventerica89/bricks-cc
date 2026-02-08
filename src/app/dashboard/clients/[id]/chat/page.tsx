@@ -30,7 +30,9 @@ export default function ChatPage() {
   useEffect(() => {
     const fetchSites = async () => {
       try {
-        const res = await fetch(`/api/clients/${clientId}/sites`);
+        const res = await fetch(`/api/clients/${clientId}/sites`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Failed to fetch sites");
         const data = await res.json();
         const fetchedSites: MaskedSite[] = data.sites;

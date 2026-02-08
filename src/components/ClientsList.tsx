@@ -30,7 +30,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
 
   const loadClients = async () => {
     try {
-      const response = await fetch("/api/clients");
+      const response = await fetch("/api/clients", { cache: "no-store" });
       if (!response.ok) {
         throw new Error("Failed to fetch clients");
       }

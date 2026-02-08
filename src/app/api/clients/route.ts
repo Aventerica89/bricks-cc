@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
       email,
       company,
       avatarUrl,
+      isActive: true,
     });
 
     const newClient = await db.query.clients.findFirst({
