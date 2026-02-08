@@ -62,6 +62,7 @@ export default function BuildPage() {
 
   // Session history
   const [recentSessions, setRecentSessions] = useState<BuildSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -88,11 +89,24 @@ export default function BuildPage() {
 
   const handleStartNew = useCallback(() => {
     setResult(null);
+    setActiveSessionId(null);
     setFormData({ description: "", acssJsDump: "", containerGridCode: "" });
     setSelectedLessonId("");
     setSelectedScenarioId("");
     setSelectedScenario(null);
     setShowNewSession(true);
+  }, []);
+
+  const handleOpenSession = useCallback((session: BuildSession) => {
+    const outputs = session.agentOutputs as {
+      structure?: Record<string, unknown>;
+    } | null;
+
+    if (!outputs?.structure) return;
+
+    setResult({ session, agentOutput: outputs.structure });
+    setActiveSessionId(session.id);
+    setShowNewSession(false);
   }, []);
 
   // Load lessons on mount
@@ -185,6 +199,7 @@ export default function BuildPage() {
 
       const executeResult = await executeResponse.json();
       setResult(executeResult);
+      setActiveSessionId(session.id);
       setShowNewSession(false);
 
       // Refresh session history
@@ -424,6 +439,18 @@ export default function BuildPage() {
                     <Download className="w-4 h-4" />
                     Download
                   </button>
+                  {activeSessionId && (
+                    <button
+                      onClick={() => {
+                        setResult(null);
+                        setActiveSessionId(null);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <History className="w-4 h-4" />
+                      All Sessions
+                    </button>
+                  )}
                   <button
                     onClick={handleStartNew}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors"
@@ -583,10 +610,18 @@ export default function BuildPage() {
                     (session.inputData as { description?: string } | null)
                       ?.description || "Untitled session";
 
+                  const hasOutput = !!structureOutput?.structure;
+
                   return (
-                    <div
+                    <button
                       key={session.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                      onClick={() => handleOpenSession(session)}
+                      disabled={!hasOutput}
+                      className={`w-full text-left flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                        hasOutput
+                          ? "bg-gray-50 border-gray-200 hover:bg-purple-50 hover:border-purple-200 cursor-pointer"
+                          : "bg-gray-50 border-gray-200 opacity-60 cursor-default"
+                      }`}
                     >
                       <div className="min-w-0 flex-1 mr-4">
                         <div className="flex items-center gap-2 mb-0.5">
@@ -639,7 +674,7 @@ export default function BuildPage() {
                           {new Date(session.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
