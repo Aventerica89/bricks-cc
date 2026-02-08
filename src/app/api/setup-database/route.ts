@@ -152,9 +152,21 @@ export async function POST(request: NextRequest) {
       )
     `);
 
+    await db.run(sql`
+      CREATE TABLE IF NOT EXISTS platform_settings (
+        id TEXT PRIMARY KEY NOT NULL,
+        basecamp_account_id TEXT,
+        basecamp_oauth_token TEXT,
+        bricks_api_key TEXT,
+        bricks_site_url TEXT,
+        claude_enabled INTEGER DEFAULT 1,
+        updated_at INTEGER DEFAULT (unixepoch())
+      )
+    `);
+
     return NextResponse.json({
       success: true,
-      message: "✅ Database setup complete! All teaching system tables created.",
+      message: "Database setup complete. All tables created.",
       tables: [
         "agent_instructions",
         "agents",
@@ -163,6 +175,7 @@ export async function POST(request: NextRequest) {
         "lesson_scenarios",
         "lessons",
         "visual_comparisons",
+        "platform_settings",
       ],
       next_steps: [
         "SECURITY: Remove DB_SETUP_TOKEN from Vercel environment variables to disable this endpoint",

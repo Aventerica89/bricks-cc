@@ -200,6 +200,19 @@ export const contentAssets = sqliteTable("content_assets", {
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
 });
 
+// Platform-wide settings (singleton row, id = "default")
+export const platformSettings = sqliteTable("platform_settings", {
+  id: text("id").primaryKey(),
+  basecampAccountId: text("basecamp_account_id"),
+  basecampOauthToken: text("basecamp_oauth_token"),
+  bricksApiKey: text("bricks_api_key"),
+  bricksSiteUrl: text("bricks_site_url"),
+  claudeEnabled: integer("claude_enabled", { mode: "boolean" }).default(true),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).default(
+    sql`(unixepoch())`
+  ),
+});
+
 // Export types - Original
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type NewChatMessage = typeof chatMessages.$inferInsert;
@@ -240,3 +253,6 @@ export type NewVisualComparison = typeof visualComparisons.$inferInsert;
 
 export type ContentAsset = typeof contentAssets.$inferSelect;
 export type NewContentAsset = typeof contentAssets.$inferInsert;
+
+export type PlatformSettings = typeof platformSettings.$inferSelect;
+export type NewPlatformSettings = typeof platformSettings.$inferInsert;
