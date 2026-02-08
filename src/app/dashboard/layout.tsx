@@ -3,10 +3,9 @@ import {
   LayoutDashboard,
   Users,
   Settings,
-  MessageSquare,
   Layout,
-  Menu,
 } from "lucide-react";
+import { ConnectionStatus } from "@/components/dashboard/ConnectionStatus";
 
 export default function DashboardLayout({
   children,
@@ -16,7 +15,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
+      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex md:flex-col">
         <div className="p-6 border-b border-gray-200">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
@@ -26,7 +25,7 @@ export default function DashboardLayout({
           </Link>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 flex-1">
           <NavLink href="/dashboard" icon={<LayoutDashboard className="w-5 h-5" />}>
             Dashboard
           </NavLink>
@@ -41,19 +40,24 @@ export default function DashboardLayout({
           </NavLink>
         </nav>
 
-        {/* Help section */}
-        <div className="absolute bottom-0 left-0 w-64 p-4 border-t border-gray-200">
-          <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-purple-900 mb-1">Need help?</h4>
-            <p className="text-sm text-purple-700 mb-3">
-              Check our documentation
-            </p>
-            <Link
-              href="/docs"
-              className="text-sm text-purple-600 hover:text-purple-700"
-            >
-              View docs &rarr;
-            </Link>
+        {/* Bottom section */}
+        <div className="mt-auto">
+          <div className="border-t border-gray-200">
+            <ConnectionStatus />
+          </div>
+          <div className="p-4 border-t border-gray-200">
+            <div className="bg-purple-50 rounded-lg p-4">
+              <h4 className="font-medium text-purple-900 mb-1">Need help?</h4>
+              <p className="text-sm text-purple-700 mb-3">
+                Check our documentation
+              </p>
+              <Link
+                href="/docs"
+                className="text-sm text-purple-600 hover:text-purple-700"
+              >
+                View docs &rarr;
+              </Link>
+            </div>
           </div>
         </div>
       </aside>
