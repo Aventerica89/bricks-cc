@@ -12,8 +12,8 @@ const ChatRequestSchema = z.object({
   message: z.string().min(1, "message is required").max(10000, "message must be less than 10000 characters"),
   context: z
     .object({
-      basecampProjectId: z.number().optional(),
-      currentPageId: z.number().optional(),
+      basecampProjectId: z.coerce.number().optional(),
+      currentPageId: z.coerce.number().optional(),
     })
     .optional(),
 });
