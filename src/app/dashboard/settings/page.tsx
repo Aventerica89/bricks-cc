@@ -89,8 +89,10 @@ function SettingsContent() {
         server_config: "Server configuration error. Check env vars.",
         basecamp_auth_failed: "Basecamp authorization failed. Try again.",
       };
-      setToast(messages[error] ?? "An error occurred.");
-      setTimeout(() => setToast(null), 5000);
+      const detail = searchParams.get("detail");
+      const base = messages[error] ?? "An error occurred.";
+      setToast(detail ? `${base} (${decodeURIComponent(detail)})` : base);
+      setTimeout(() => setToast(null), 10000);
     }
   }, [searchParams]);
 

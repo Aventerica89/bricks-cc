@@ -44,9 +44,16 @@ export async function GET(request: NextRequest) {
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
-      console.error("Basecamp token exchange failed:", errorText);
+      console.error(
+        "Basecamp token exchange failed:",
+        tokenResponse.status,
+        errorText
+      );
+      const detail = encodeURIComponent(
+        `${tokenResponse.status}: ${errorText.slice(0, 100)}`
+      );
       return NextResponse.redirect(
-        `${REDIRECT_BASE}/dashboard/settings?error=basecamp_auth_failed`
+        `${REDIRECT_BASE}/dashboard/settings?error=basecamp_auth_failed&detail=${detail}`
       );
     }
 
