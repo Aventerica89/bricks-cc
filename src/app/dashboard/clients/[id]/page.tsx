@@ -35,8 +35,8 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-bold text-2xl">C</span>
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                <span className="text-purple-600 font-bold text-2xl">C</span>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
@@ -87,7 +87,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
             <p>No sites configured yet.</p>
             <Link
               href={`/dashboard/clients/${id}/sites/new`}
-              className="text-primary-600 hover:text-primary-700 mt-2 inline-block"
+              className="text-purple-600 hover:text-purple-700 mt-2 inline-block"
             >
               Add a site &rarr;
             </Link>
@@ -112,9 +112,9 @@ function ActionCard({
   return (
     <Link
       href={href}
-      className="bg-white rounded-lg border border-gray-200 p-6 hover:border-primary-300 hover:shadow-md transition-all"
+      className="bg-white rounded-lg border border-gray-200 p-6 hover:border-purple-300 hover:shadow-md transition-all"
     >
-      <div className="text-primary-600 mb-4">{icon}</div>
+      <div className="text-purple-600 mb-4">{icon}</div>
       <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
       <p className="text-sm text-gray-500">{description}</p>
     </Link>

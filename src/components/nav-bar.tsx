@@ -3,13 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, Code2, HelpCircle } from "lucide-react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Code2,
+  Settings,
+  HelpCircle,
+} from "lucide-react";
 import InstructionsModal from "./instructions-modal";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/teaching", label: "Teaching", icon: BookOpen },
   { href: "/build", label: "Build", icon: Code2 },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export default function NavBar() {

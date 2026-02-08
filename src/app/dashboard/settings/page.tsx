@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Settings,
   Key,
@@ -11,15 +11,26 @@ import {
   EyeOff,
   CheckCircle,
   AlertCircle,
+  Copy,
+  Check,
 } from "lucide-react";
 
 export default function SettingsPage() {
   const [showBasecampToken, setShowBasecampToken] = useState(false);
   const [showBricksKey, setShowBricksKey] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [webhookCopied, setWebhookCopied] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
     "idle"
   );
+
+  const WEBHOOK_URL = "https://bricks-cc.jbcloud.app/api/basecamp/webhooks";
+
+  const copyWebhookUrl = useCallback(() => {
+    navigator.clipboard.writeText(WEBHOOK_URL);
+    setWebhookCopied(true);
+    setTimeout(() => setWebhookCopied(false), 2000);
+  }, []);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -69,7 +80,7 @@ export default function SettingsPage() {
                   <input
                     type="checkbox"
                     defaultChecked
-                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
                   <span className="text-sm text-gray-700">
                     Enable Claude AI responses
@@ -93,7 +104,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   placeholder="Your Basecamp Account ID"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -104,7 +115,7 @@ export default function SettingsPage() {
                   <input
                     type={showBasecampToken ? "text" : "password"}
                     placeholder="Your Basecamp OAuth Token"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent pr-10"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-10"
                   />
                   <button
                     type="button"
@@ -127,11 +138,19 @@ export default function SettingsPage() {
                   <input
                     type="text"
                     readOnly
-                    value="https://your-domain.com/api/basecamp/webhooks"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+                    value={WEBHOOK_URL}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 font-mono text-sm"
                   />
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
-                    Copy
+                  <button
+                    onClick={copyWebhookUrl}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm transition-colors"
+                  >
+                    {webhookCopied ? (
+                      <Check className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                    {webhookCopied ? "Copied" : "Copy"}
                   </button>
                 </div>
               </div>
@@ -153,7 +172,7 @@ export default function SettingsPage() {
                   <input
                     type={showBricksKey ? "text" : "password"}
                     placeholder="Default Bricks API Key (optional)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent pr-10"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-10"
                   />
                   <button
                     type="button"
@@ -176,7 +195,7 @@ export default function SettingsPage() {
                   <input
                     type="checkbox"
                     defaultChecked
-                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
                   <span className="text-sm text-gray-700">
                     Allow clients to request page edits via chat
@@ -203,7 +222,7 @@ export default function SettingsPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white px-6 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-2 rounded-lg transition-colors"
             >
               <Save className="w-4 h-4" />
               {isSaving ? "Saving..." : "Save Settings"}
@@ -230,7 +249,7 @@ function SettingsSection({
     <div className="bg-white rounded-lg border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="text-primary-600">{icon}</div>
+          <div className="text-purple-600">{icon}</div>
           <div>
             <h2 className="font-semibold text-gray-900">{title}</h2>
             <p className="text-sm text-gray-500">{description}</p>

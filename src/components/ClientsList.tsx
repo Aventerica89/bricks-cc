@@ -53,7 +53,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
       </div>
     );
   }
@@ -64,7 +64,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
         <p className="text-red-500">{error}</p>
         <button
           onClick={loadClients}
-          className="mt-4 text-primary-600 hover:underline"
+          className="mt-4 text-purple-600 hover:underline"
         >
           Try again
         </button>
@@ -77,7 +77,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Users className="w-6 h-6 text-primary-600" />
+          <Users className="w-6 h-6 text-purple-600" />
           <h2 className="text-xl font-semibold text-gray-800">Clients</h2>
           <span className="bg-gray-100 text-gray-600 text-sm px-2 py-1 rounded-full">
             {clients.length}
@@ -85,7 +85,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
         </div>
         <Link
           href="/dashboard/clients/new"
-          className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Client
@@ -100,7 +100,7 @@ export default function ClientsList({ onClientSelect }: ClientsListProps) {
           placeholder="Search clients..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
 
@@ -139,12 +139,12 @@ function ClientCard({
     <Link
       href={`/dashboard/clients/${client.id}`}
       onClick={onClick}
-      className="block bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all p-4"
+      className="block bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all p-4"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Avatar */}
-          <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+          <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
             {client.avatarUrl ? (
               <img
                 src={client.avatarUrl}
@@ -152,7 +152,7 @@ function ClientCard({
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
-              <span className="text-primary-600 font-semibold text-lg">
+              <span className="text-purple-600 font-semibold text-lg">
                 {client.name.charAt(0).toUpperCase()}
               </span>
             )}

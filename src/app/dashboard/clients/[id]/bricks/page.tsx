@@ -25,8 +25,8 @@ export default async function BricksPage({ params }: BricksPageProps) {
         {/* Header */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-50 rounded-lg">
-              <Layout className="w-6 h-6 text-primary-600" />
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <Layout className="w-6 h-6 text-purple-600" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">

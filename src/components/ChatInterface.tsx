@@ -170,7 +170,7 @@ export default function ChatInterface({
             <span>{error}</span>
             <button
               onClick={sendMessage}
-              className="text-primary-600 hover:underline"
+              className="text-purple-600 hover:underline"
             >
               Retry
             </button>
@@ -189,14 +189,14 @@ export default function ChatInterface({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             rows={1}
             disabled={isLoading}
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
-            className="bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white rounded-lg px-4 py-2 transition-colors"
+            className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg px-4 py-2 transition-colors"
             aria-label="Send message"
           >
             {isLoading ? (
@@ -221,7 +221,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       <div
         className={`max-w-[80%] rounded-lg px-4 py-2 ${
           isUser
-            ? "bg-primary-600 text-white"
+            ? "bg-purple-600 text-white"
             : "bg-gray-100 text-gray-800"
         }`}
       >
@@ -250,7 +250,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
 
         <p
           className={`text-xs mt-1 ${
-            isUser ? "text-primary-200" : "text-gray-400"
+            isUser ? "text-purple-200" : "text-gray-400"
           }`}
         >
           {formatRelativeTime(message.timestamp)}

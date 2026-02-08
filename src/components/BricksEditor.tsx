@@ -87,7 +87,7 @@ export default function BricksEditor({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function BricksEditor({
         <p className="text-red-500">{error}</p>
         <button
           onClick={loadPageData}
-          className="mt-4 text-primary-600 hover:underline"
+          className="mt-4 text-purple-600 hover:underline"
         >
           Try again
         </button>
@@ -120,7 +120,7 @@ export default function BricksEditor({
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <Layout className="w-5 h-5 text-primary-600" />
+          <Layout className="w-5 h-5 text-purple-600" />
           <div>
             <h2 className="font-semibold text-gray-800">
               {pageState.pageTitle}
@@ -141,7 +141,7 @@ export default function BricksEditor({
             Refresh
           </button>
           {!readOnly && (
-            <button className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
               <Eye className="w-4 h-4" />
               Preview
             </button>
@@ -223,7 +223,7 @@ function ElementTreeItem({
       onClick={onClick}
       className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
         isSelected
-          ? "bg-primary-100 text-primary-700"
+          ? "bg-purple-100 text-purple-700"
           : "hover:bg-gray-100 text-gray-700"
       }`}
     >
@@ -251,7 +251,7 @@ function ElementDetails({
           {element.label || element.name}
         </h3>
         {!readOnly && (
-          <button className="flex items-center gap-1 text-primary-600 hover:text-primary-700 text-sm">
+          <button className="flex items-center gap-1 text-purple-600 hover:text-purple-700 text-sm">
             <Edit3 className="w-4 h-4" />
             Edit
           </button>

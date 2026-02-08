@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   PlusCircle,
   Play,
@@ -12,6 +12,8 @@ import {
   Download,
   Check,
   RotateCcw,
+  AlertCircle,
+  X,
 } from "lucide-react";
 
 type Lesson = {
@@ -61,6 +63,7 @@ export default function BuildPage() {
   // Session history
   const [recentSessions, setRecentSessions] = useState<BuildSession[]>([]);
   const [copied, setCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const copyJson = useCallback((json: Record<string, unknown>) => {
     navigator.clipboard.writeText(JSON.stringify(json, null, 2));
@@ -147,6 +150,7 @@ export default function BuildPage() {
   const handleCreateAndExecute = async () => {
     setLoading(true);
     setResult(null);
+    setErrorMessage(null);
 
     try {
       let parsedAcss: Record<string, unknown> | undefined;
@@ -192,11 +196,30 @@ export default function BuildPage() {
         .catch(console.error);
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Check console for details.");
+      const message =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      setErrorMessage(message);
     } finally {
       setLoading(false);
     }
   };
+
+  // Cmd+Enter shortcut to execute build
+  const executeRef = useRef(handleCreateAndExecute);
+  executeRef.current = handleCreateAndExecute;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        if (showNewSession && formData.description && !loading) {
+          e.preventDefault();
+          executeRef.current();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showNewSession, formData.description, loading]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -328,8 +351,32 @@ export default function BuildPage() {
               >
                 <Play className="w-5 h-5" />
                 {loading ? "Executing..." : "Create & Execute"}
+                {!loading && (
+                  <kbd className="hidden sm:inline-block ml-2 px-1.5 py-0.5 text-xs bg-white/20 rounded">
+                    Cmd+Enter
+                  </kbd>
+                )}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {errorMessage && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">
+                Build failed
+              </p>
+              <p className="text-sm text-red-600 mt-0.5">{errorMessage}</p>
+            </div>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="text-red-400 hover:text-red-600 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 

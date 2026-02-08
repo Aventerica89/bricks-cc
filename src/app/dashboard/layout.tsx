@@ -19,7 +19,7 @@ export default function DashboardLayout({
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
         <div className="p-6 border-b border-gray-200">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
               <Layout className="w-5 h-5 text-white" />
             </div>
             <span className="font-bold text-gray-900">WP Manager</span>
@@ -43,14 +43,14 @@ export default function DashboardLayout({
 
         {/* Help section */}
         <div className="absolute bottom-0 left-0 w-64 p-4 border-t border-gray-200">
-          <div className="bg-primary-50 rounded-lg p-4">
-            <h4 className="font-medium text-primary-900 mb-1">Need help?</h4>
-            <p className="text-sm text-primary-700 mb-3">
+          <div className="bg-purple-50 rounded-lg p-4">
+            <h4 className="font-medium text-purple-900 mb-1">Need help?</h4>
+            <p className="text-sm text-purple-700 mb-3">
               Check our documentation
             </p>
             <Link
               href="/docs"
-              className="text-sm text-primary-600 hover:text-primary-700"
+              className="text-sm text-purple-600 hover:text-purple-700"
             >
               View docs &rarr;
             </Link>

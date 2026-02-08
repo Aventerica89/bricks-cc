@@ -132,7 +132,7 @@ export default function FeedbackForm({
       {!embedded && (
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <MessageSquarePlus className="w-5 h-5 text-primary-600" />
+            <MessageSquarePlus className="w-5 h-5 text-purple-600" />
             <h2 className="text-lg font-semibold text-gray-800">
               Submit Feedback
             </h2>
@@ -163,7 +163,7 @@ export default function FeedbackForm({
                 onClick={() => setFeedbackType(type)}
                 className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors ${
                   feedbackType === type
-                    ? "border-primary-500 bg-primary-50 text-primary-700"
+                    ? "border-purple-500 bg-purple-50 text-purple-700"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
@@ -193,7 +193,7 @@ export default function FeedbackForm({
                   ? "Describe the feature you&apos;d like to see..."
                   : "Share your thoughts..."
             }
-            className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             disabled={isSubmitting}
           />
         </div>
@@ -210,7 +210,7 @@ export default function FeedbackForm({
         <button
           type="submit"
           disabled={isSubmitting || !message.trim()}
-          className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-lg transition-colors"
         >
           {isSubmitting ? (
             <>

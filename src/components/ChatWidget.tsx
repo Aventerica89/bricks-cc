@@ -33,7 +33,7 @@ export default function ChatWidget({
           }`}
         >
           {/* Header */}
-          <div className="bg-primary-600 text-white px-4 py-3 flex items-center justify-between">
+          <div className="bg-purple-600 text-white px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5" />
               <span className="font-medium">Chat with AI Assistant</span>
@@ -41,7 +41,7 @@ export default function ChatWidget({
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="p-1 hover:bg-primary-700 rounded transition-colors"
+                className="p-1 hover:bg-purple-700 rounded transition-colors"
                 aria-label={isMinimized ? "Maximize" : "Minimize"}
               >
                 {isMinimized ? (
@@ -52,7 +52,7 @@ export default function ChatWidget({
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-primary-700 rounded transition-colors"
+                className="p-1 hover:bg-purple-700 rounded transition-colors"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -71,7 +71,7 @@ export default function ChatWidget({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-primary-600 hover:bg-primary-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110"
+          className="bg-purple-600 hover:bg-purple-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110"
           aria-label="Open chat"
         >
           <MessageCircle className="w-6 h-6" />
