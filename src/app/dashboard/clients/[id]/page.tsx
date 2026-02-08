@@ -5,10 +5,8 @@ import {
   Layout,
   MessageSquarePlus,
   Settings,
-  Globe,
-  Mail,
-  Building,
 } from "lucide-react";
+import SiteManager from "@/components/SiteManager";
 
 interface ClientPageProps {
   params: Promise<{
@@ -78,21 +76,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
         </div>
 
         {/* Sites */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Client Sites
-          </h2>
-          <div className="text-center py-8 text-gray-500">
-            <Globe className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p>No sites configured yet.</p>
-            <Link
-              href={`/dashboard/clients/${id}/sites/new`}
-              className="text-purple-600 hover:text-purple-700 mt-2 inline-block"
-            >
-              Add a site &rarr;
-            </Link>
-          </div>
-        </div>
+        <SiteManager clientId={id} />
       </div>
     </div>
   );
