@@ -35,6 +35,11 @@ interface Scenario {
   id: string;
   lessonId: string;
   name: string;
+  acssJsDump: Record<string, unknown> | null;
+  expectedOutput: Record<string, unknown> | null;
+  correctContainerGridCode: string | null;
+  cssHandlingRules: Record<string, unknown> | null;
+  validationRules: Record<string, unknown> | null;
   createdAt: string;
 }
 
@@ -544,21 +549,51 @@ export default function LessonDetailPage({
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {scenarios.map((scenario) => (
-                    <div
-                      key={scenario.id}
-                      className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-colors group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-medium text-gray-900 group-hover:text-purple-700">
-                          {scenario.name}
-                        </h3>
-                        <span className="text-xs text-gray-500">
-                          {new Date(scenario.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                  {scenarios.map((scenario) => {
+                    const fields = [
+                      { key: "acssJsDump", label: "ACSS" },
+                      { key: "expectedOutput", label: "Expected" },
+                      { key: "correctContainerGridCode", label: "Grid" },
+                    ] as const;
+                    return (
+                      <Link
+                        key={scenario.id}
+                        href={`/teaching/scenarios/${scenario.id}`}
+                        className="block p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors group"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-medium text-gray-900 group-hover:text-purple-700">
+                            {scenario.name}
+                          </h3>
+                          <span className="text-xs text-gray-500">
+                            {new Date(scenario.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex gap-3">
+                          {fields.map(({ key, label }) => {
+                            const filled = Boolean(scenario[key]);
+                            return (
+                              <span
+                                key={key}
+                                className={`inline-flex items-center gap-1 text-xs ${
+                                  filled
+                                    ? "text-green-600"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                <span
+                                  className={`w-2 h-2 rounded-full ${
+                                    filled ? "bg-green-500" : "bg-gray-300"
+                                  }`}
+                                />
+                                {label}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

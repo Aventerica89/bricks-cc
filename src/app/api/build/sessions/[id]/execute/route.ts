@@ -13,7 +13,6 @@ export async function POST(
   try {
     const { id } = await params;
 
-    // Get the build session
     const [session] = await db
       .select()
       .from(buildSessions)
@@ -27,20 +26,33 @@ export async function POST(
       );
     }
 
-    // Get reference scenarios if lesson/scenario is specified
+    // Load ALL scenarios from the lesson for few-shot examples
     let referenceScenarios: Array<{
       name: string;
       expectedOutput: Record<string, unknown>;
     }> = [];
 
-    if (session.scenarioId) {
+    if (session.lessonId) {
+      const allScenarios = await db
+        .select()
+        .from(lessonScenarios)
+        .where(eq(lessonScenarios.lessonId, session.lessonId));
+
+      referenceScenarios = allScenarios
+        .filter((s) => s.expectedOutput !== null)
+        .map((s) => ({
+          name: s.name,
+          expectedOutput: s.expectedOutput as Record<string, unknown>,
+        }));
+    } else if (session.scenarioId) {
+      // If only scenarioId provided (no lessonId), load that single one
       const [scenario] = await db
         .select()
         .from(lessonScenarios)
         .where(eq(lessonScenarios.id, session.scenarioId))
         .limit(1);
 
-      if (scenario && scenario.expectedOutput) {
+      if (scenario?.expectedOutput) {
         referenceScenarios = [
           {
             name: scenario.name,
@@ -50,7 +62,6 @@ export async function POST(
       }
     }
 
-    // Execute Structure Agent (Phase 1: JavaScript)
     const inputData = session.inputData as {
       acssJsDump?: Record<string, unknown>;
       containerGridCode?: string;
@@ -64,16 +75,14 @@ export async function POST(
       referenceScenarios,
     });
 
-    // Update session with agent output
     const [updated] = await db
       .update(buildSessions)
       .set({
-        agentOutputs: {
-          structure: result,
-        },
-        status: result.confidence >= CONFIDENCE_SCORING.AUTO_REVIEW_THRESHOLD
-          ? "review"
-          : "in_progress",
+        agentOutputs: { structure: result },
+        status:
+          result.confidence >= CONFIDENCE_SCORING.AUTO_REVIEW_THRESHOLD
+            ? "review"
+            : "in_progress",
         updatedAt: new Date(),
       })
       .where(eq(buildSessions.id, id))

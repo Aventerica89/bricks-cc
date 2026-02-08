@@ -1,8 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { PlusCircle, Play, Code2, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { PlusCircle, Play, Code2, Sparkles, BookOpen, History } from "lucide-react";
+
+type Lesson = {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+};
+
+type Scenario = {
+  id: string;
+  name: string;
+  acssJsDump: Record<string, unknown> | null;
+  correctContainerGridCode: string | null;
+  expectedOutput: Record<string, unknown> | null;
+};
+
+type BuildSession = {
+  id: string;
+  lessonId: string | null;
+  scenarioId: string | null;
+  status: string;
+  agentOutputs: Record<string, unknown> | null;
+  createdAt: string;
+};
 
 export default function BuildPage() {
   const [showNewSession, setShowNewSession] = useState(false);
@@ -14,47 +37,116 @@ export default function BuildPage() {
   });
   const [result, setResult] = useState<any>(null);
 
+  // Lesson/Scenario integration
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [selectedLessonId, setSelectedLessonId] = useState("");
+  const [selectedScenarioId, setSelectedScenarioId] = useState("");
+  const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(
+    null
+  );
+
+  // Session history
+  const [recentSessions, setRecentSessions] = useState<BuildSession[]>([]);
+
+  // Load lessons on mount
+  useEffect(() => {
+    fetch("/api/teaching/lessons")
+      .then((r) => r.json())
+      .then((data) => setLessons(data.lessons || []))
+      .catch(console.error);
+
+    fetch("/api/build/sessions")
+      .then((r) => r.json())
+      .then((data) => setRecentSessions((data.sessions || []).slice(0, 10)))
+      .catch(console.error);
+  }, []);
+
+  // Load scenarios when lesson changes
+  useEffect(() => {
+    if (!selectedLessonId) {
+      setScenarios([]);
+      setSelectedScenarioId("");
+      setSelectedScenario(null);
+      return;
+    }
+
+    fetch(`/api/teaching/scenarios?lessonId=${selectedLessonId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setScenarios(data.scenarios || []);
+        setSelectedScenarioId("");
+        setSelectedScenario(null);
+      })
+      .catch(console.error);
+  }, [selectedLessonId]);
+
+  // Auto-fill form when scenario changes
+  useEffect(() => {
+    if (!selectedScenarioId) {
+      setSelectedScenario(null);
+      return;
+    }
+
+    const scenario = scenarios.find((s) => s.id === selectedScenarioId);
+    if (!scenario) return;
+
+    setSelectedScenario(scenario);
+    setFormData({
+      description: formData.description,
+      acssJsDump: scenario.acssJsDump
+        ? JSON.stringify(scenario.acssJsDump, null, 2)
+        : "",
+      containerGridCode: scenario.correctContainerGridCode || "",
+    });
+  }, [selectedScenarioId, scenarios]);
+
   const handleCreateAndExecute = async () => {
     setLoading(true);
     setResult(null);
 
     try {
-      // 1. Create build session
+      let parsedAcss: Record<string, unknown> | undefined;
+      if (formData.acssJsDump.trim()) {
+        parsedAcss = JSON.parse(formData.acssJsDump);
+      }
+
       const createResponse = await fetch("/api/build/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          lessonId: selectedLessonId || null,
+          scenarioId: selectedScenarioId || null,
           inputData: {
             description: formData.description,
-            acssJsDump: formData.acssJsDump
-              ? JSON.parse(formData.acssJsDump)
-              : undefined,
-            containerGridCode: formData.containerGridCode,
+            acssJsDump: parsedAcss,
+            containerGridCode: formData.containerGridCode || undefined,
           },
         }),
       });
 
-      if (!createResponse.ok) {
-        throw new Error("Failed to create session");
-      }
+      if (!createResponse.ok) throw new Error("Failed to create session");
 
       const { session } = await createResponse.json();
 
-      // 2. Execute structure agent
       const executeResponse = await fetch(
         `/api/build/sessions/${session.id}/execute`,
-        {
-          method: "POST",
-        }
+        { method: "POST" }
       );
 
-      if (!executeResponse.ok) {
-        throw new Error("Failed to execute agent");
-      }
+      if (!executeResponse.ok) throw new Error("Failed to execute agent");
 
       const executeResult = await executeResponse.json();
       setResult(executeResult);
       setShowNewSession(false);
+
+      // Refresh session history
+      fetch("/api/build/sessions")
+        .then((r) => r.json())
+        .then((data) =>
+          setRecentSessions((data.sessions || []).slice(0, 10))
+        )
+        .catch(console.error);
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred. Check console for details.");
@@ -98,6 +190,46 @@ export default function BuildPage() {
             </h2>
 
             <div className="space-y-6">
+              {/* Lesson / Scenario selectors */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <BookOpen className="w-4 h-4 inline mr-1" />
+                    Lesson (optional)
+                  </label>
+                  <select
+                    value={selectedLessonId}
+                    onChange={(e) => setSelectedLessonId(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+                  >
+                    <option value="">No lesson selected</option>
+                    {lessons.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.title} ({l.category})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Scenario (optional)
+                  </label>
+                  <select
+                    value={selectedScenarioId}
+                    onChange={(e) => setSelectedScenarioId(e.target.value)}
+                    disabled={!selectedLessonId}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:opacity-50"
+                  >
+                    <option value="">No scenario selected</option>
+                    {scenarios.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Description
@@ -161,13 +293,22 @@ export default function BuildPage() {
         {/* Result Display */}
         {result && (
           <div className="space-y-6">
-            {/* Agent Output */}
             <div className="bg-white rounded-lg shadow-sm p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Sparkles className="w-6 h-6 text-purple-600" />
                 <h2 className="text-2xl font-bold text-gray-900">
                   Structure Agent Output
                 </h2>
+                {result.agentOutput.metadata.aiGenerated && (
+                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                    AI Generated
+                  </span>
+                )}
+                {!result.agentOutput.metadata.aiGenerated && (
+                  <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
+                    Template Fallback
+                  </span>
+                )}
               </div>
 
               {/* Confidence */}
@@ -186,7 +327,7 @@ export default function BuildPage() {
                     style={{
                       width: `${result.agentOutput.confidence * 100}%`,
                     }}
-                  ></div>
+                  />
                 </div>
               </div>
 
@@ -199,7 +340,7 @@ export default function BuildPage() {
                   {result.agentOutput.reasoning.map(
                     (reason: string, i: number) => (
                       <li key={i} className="text-sm text-gray-600">
-                        • {reason}
+                        - {reason}
                       </li>
                     )
                   )}
@@ -216,7 +357,7 @@ export default function BuildPage() {
                     {result.agentOutput.warnings.map(
                       (warning: string, i: number) => (
                         <li key={i} className="text-sm text-orange-600">
-                          ⚠ {warning}
+                          ! {warning}
                         </li>
                       )
                     )}
@@ -246,21 +387,128 @@ export default function BuildPage() {
                 </div>
               </div>
 
-              {/* Generated Structure */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Generated Bricks Structure
-                </h3>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono">
-                  {JSON.stringify(result.agentOutput.structure, null, 2)}
-                </pre>
+              {/* Side-by-side comparison when expected output exists */}
+              {selectedScenario?.expectedOutput ? (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">
+                    Comparison: Expected vs Generated
+                  </h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                        Expected Output
+                      </div>
+                      <pre className="bg-gray-900 text-blue-400 p-4 rounded-lg overflow-x-auto text-sm font-mono max-h-96 overflow-y-auto">
+                        {JSON.stringify(
+                          selectedScenario.expectedOutput,
+                          null,
+                          2
+                        )}
+                      </pre>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                        Generated Output
+                      </div>
+                      <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono max-h-96 overflow-y-auto">
+                        {JSON.stringify(
+                          result.agentOutput.structure,
+                          null,
+                          2
+                        )}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Generated Bricks Structure
+                  </h3>
+                  <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono max-h-96 overflow-y-auto">
+                    {JSON.stringify(result.agentOutput.structure, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Recent Sessions */}
+        {recentSessions.length > 0 && !showNewSession && !result && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <History className="w-6 h-6 text-gray-600" />
+                <h2 className="text-xl font-bold text-gray-900">
+                  Recent Sessions
+                </h2>
+              </div>
+              <div className="space-y-3">
+                {recentSessions.map((session) => {
+                  const structureOutput = session.agentOutputs as {
+                    structure?: {
+                      confidence?: number;
+                      metadata?: { aiGenerated?: boolean };
+                    };
+                  } | null;
+                  const confidence =
+                    structureOutput?.structure?.confidence;
+                  const aiGenerated =
+                    structureOutput?.structure?.metadata?.aiGenerated;
+
+                  return (
+                    <div
+                      key={session.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                    >
+                      <div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {session.id.slice(0, 20)}...
+                        </span>
+                        <span
+                          className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                            session.status === "review"
+                              ? "bg-blue-100 text-blue-700"
+                              : session.status === "approved"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {session.status}
+                        </span>
+                        {aiGenerated !== undefined && (
+                          <span
+                            className={`ml-1 text-xs px-2 py-0.5 rounded-full ${
+                              aiGenerated
+                                ? "bg-green-100 text-green-700"
+                                : "bg-orange-100 text-orange-700"
+                            }`}
+                          >
+                            {aiGenerated ? "AI" : "Template"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {confidence !== undefined && (
+                          <span className="text-sm text-purple-600 font-medium">
+                            {(confidence * 100).toFixed(0)}%
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-500">
+                          {new Date(session.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         )}
 
         {/* Empty State */}
-        {!showNewSession && !result && (
+        {!showNewSession && !result && recentSessions.length === 0 && (
           <div className="bg-white rounded-lg p-12 text-center shadow-sm">
             <Code2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">

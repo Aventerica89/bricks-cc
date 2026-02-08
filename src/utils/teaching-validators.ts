@@ -79,6 +79,20 @@ export function generateContentAssetId(): string {
   return `content_${nanoid(16)}`;
 }
 
+/**
+ * Scenario update schema (partial — all fields optional)
+ */
+export const updateScenarioSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  acssJsDump: z.record(z.string(), z.unknown()).optional().nullable(),
+  screenshotBeforeUrl: z.string().url().optional().nullable().or(z.literal("")),
+  screenshotAfterUrl: z.string().url().optional().nullable().or(z.literal("")),
+  correctContainerGridCode: z.string().optional().nullable(),
+  cssHandlingRules: z.record(z.string(), z.unknown()).optional().nullable(),
+  validationRules: z.record(z.string(), z.unknown()).optional().nullable(),
+  expectedOutput: z.record(z.string(), z.unknown()).optional().nullable(),
+});
+
 // ========================================
 // Teaching System Type Exports
 // ========================================
@@ -86,4 +100,5 @@ export function generateContentAssetId(): string {
 export type CreateLessonInput = z.infer<typeof createLessonSchema>;
 export type UpdateLessonInput = z.infer<typeof updateLessonSchema>;
 export type CreateScenarioInput = z.infer<typeof createScenarioSchema>;
+export type UpdateScenarioInput = z.infer<typeof updateScenarioSchema>;
 export type CreateBuildSessionInput = z.infer<typeof createBuildSessionSchema>;

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavBarWrapper from "@/components/nav-bar-wrapper";
 
 export const metadata: Metadata = {
-  title: "WP Manager - Claude AI Integration",
+  title: "Bricks CC - AI-Powered Bricks Builder",
   description:
-    "Unified client management platform with Claude AI, WordPress, and Basecamp integration",
+    "Teaching system and AI agent for generating Bricks Builder components",
 };
 
 export default function RootLayout({
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <NavBarWrapper />
+        {children}
+      </body>
     </html>
   );
 }
