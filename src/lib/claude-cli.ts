@@ -1,5 +1,4 @@
-import { execSync, spawn } from "child_process";
-import path from "path";
+import Anthropic from "@anthropic-ai/sdk";
 import type { ChatContext, ChatAction } from "@/types/chat";
 
 export interface ClaudeCliInput {
@@ -17,71 +16,48 @@ export interface ClaudeCliOutput {
 }
 
 /**
- * Process a message using Claude Code CLI
+ * Process a message using the Anthropic API directly
  */
 export async function processWithClaude(
   input: ClaudeCliInput
 ): Promise<ClaudeCliOutput> {
   const startTime = Date.now();
 
-  if (!process.env.CLAUDE_CLI_ENABLED) {
+  if (!process.env.ANTHROPIC_API_KEY) {
     return {
       response:
-        "Claude CLI is not enabled. Please set CLAUDE_CLI_ENABLED=true in your environment.",
+        "Anthropic API key is not configured. Please set ANTHROPIC_API_KEY in your environment.",
       executionTime: Date.now() - startTime,
     };
   }
 
-  const scriptPath = path.join(
-    process.cwd(),
-    "claude-scripts",
-    "process-chat.sh"
-  );
-
-  // Build the prompt
-  const fullPrompt = `${input.systemPrompt}
-
-Context:
-${input.context}
-
-User: ${input.userMessage}`;
+  const userContent = `Context:\n${input.context}\n\nUser: ${input.userMessage}`;
 
   try {
-    // Execute the Claude CLI script
-    const response = execSync(
-      `echo "${escapeShellArg(fullPrompt)}" | bash "${scriptPath}"`,
-      {
-        encoding: "utf-8",
-        timeout: 60000, // 60 second timeout
-        env: {
-          ...process.env,
-          CLAUDE_MODE: "cli",
-          SITE_ID: input.siteId,
-        },
-      }
-    );
+    const client = new Anthropic();
+
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 2048,
+      system: input.systemPrompt,
+      messages: [{ role: "user", content: userContent }],
+    });
 
     const executionTime = Date.now() - startTime;
 
-    // Try to parse as JSON (for structured responses)
-    try {
-      const parsed = JSON.parse(response);
-      return {
-        response: parsed.response || response.trim(),
-        actions: parsed.actions,
-        tokensUsed: parsed.tokens_used,
-        executionTime,
-      };
-    } catch {
-      // Plain text response
-      return {
-        response: response.trim(),
-        executionTime,
-      };
-    }
+    const textBlock = message.content.find((b) => b.type === "text");
+    const response = textBlock && textBlock.type === "text"
+      ? textBlock.text
+      : "No response generated.";
+
+    return {
+      response,
+      tokensUsed: message.usage.input_tokens + message.usage.output_tokens,
+      executionTime,
+    };
   } catch (error) {
     const executionTime = Date.now() - startTime;
-    console.error("Claude CLI error:", error);
+    console.error("Anthropic API error:", error);
 
     return {
       response:
@@ -89,69 +65,6 @@ User: ${input.userMessage}`;
       executionTime,
     };
   }
-}
-
-/**
- * Stream response from Claude CLI
- */
-export async function streamFromClaude(
-  input: ClaudeCliInput,
-  onChunk: (chunk: string) => void
-): Promise<ClaudeCliOutput> {
-  const startTime = Date.now();
-
-  const scriptPath = path.join(
-    process.cwd(),
-    "claude-scripts",
-    "process-chat.sh"
-  );
-
-  const fullPrompt = `${input.systemPrompt}
-
-Context:
-${input.context}
-
-User: ${input.userMessage}`;
-
-  return new Promise((resolve, reject) => {
-    const child = spawn("bash", [scriptPath], {
-      env: {
-        ...process.env,
-        CLAUDE_MODE: "cli",
-        SITE_ID: input.siteId,
-      },
-    });
-
-    let fullResponse = "";
-
-    child.stdout.on("data", (data: Buffer) => {
-      const chunk = data.toString();
-      fullResponse += chunk;
-      onChunk(chunk);
-    });
-
-    child.stderr.on("data", (data: Buffer) => {
-      console.error("Claude CLI stderr:", data.toString());
-    });
-
-    child.on("close", (code) => {
-      const executionTime = Date.now() - startTime;
-
-      if (code !== 0) {
-        reject(new Error(`Claude CLI exited with code ${code}`));
-        return;
-      }
-
-      resolve({
-        response: fullResponse.trim(),
-        executionTime,
-      });
-    });
-
-    // Send the prompt to stdin
-    child.stdin.write(fullPrompt);
-    child.stdin.end();
-  });
 }
 
 /**
@@ -217,15 +130,4 @@ export function buildContextString(context: ChatContext): string {
   }
 
   return parts.join("\n");
-}
-
-/**
- * Escape string for safe shell usage
- */
-function escapeShellArg(arg: string): string {
-  return arg
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
-    .replace(/\$/g, "\\$")
-    .replace(/`/g, "\\`");
 }
