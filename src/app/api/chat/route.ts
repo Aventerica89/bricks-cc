@@ -13,10 +13,80 @@ import type { ChatResponse, ChatAction } from "@/types/chat";
 // Force Node.js runtime (required for Anthropic SDK)
 export const runtime = "nodejs";
 
-export async function POST(request: NextRequest) {
+/**
+ * Parse WIDGET_ALLOWED_ORIGINS env var into a Set for O(1) lookup.
+ * Supports comma-separated origins, e.g. "https://site1.com,https://site2.com"
+ * A single "*" allows all origins (dev/testing only).
+ */
+function getAllowedOrigins(): Set<string> {
+  const raw = process.env.WIDGET_ALLOWED_ORIGINS || "";
+  if (!raw) return new Set();
+  return new Set(raw.split(",").map((o) => o.trim()).filter(Boolean));
+}
+
+/**
+ * Check if a request is cross-origin (widget) vs same-origin (dashboard).
+ */
+function isCrossOriginRequest(request: NextRequest): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  const host = request.headers.get("host") || "";
   try {
-    // Validate CSRF token
-    if (!validateCsrf(request)) {
+    const originHost = new URL(origin).host;
+    return originHost !== host;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Build CORS headers if the request origin is in the allowlist.
+ * Returns empty headers object if origin is not allowed.
+ */
+function getCorsHeaders(request: NextRequest): Record<string, string> {
+  const origin = request.headers.get("origin");
+  if (!origin) return {};
+
+  const allowed = getAllowedOrigins();
+  if (allowed.size === 0) return {};
+
+  const isAllowed = allowed.has("*") || allowed.has(origin);
+  if (!isAllowed) return {};
+
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+  };
+}
+
+/**
+ * Handle CORS preflight requests from the embeddable widget.
+ */
+export async function OPTIONS(request: NextRequest) {
+  const corsHeaders = getCorsHeaders(request);
+  if (!corsHeaders["Access-Control-Allow-Origin"]) {
+    return new NextResponse(null, { status: 403 });
+  }
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
+export async function POST(request: NextRequest) {
+  const crossOrigin = isCrossOriginRequest(request);
+  const corsHeaders = crossOrigin ? getCorsHeaders(request) : {};
+
+  try {
+    // Cross-origin (widget): validate origin allowlist instead of CSRF
+    // Same-origin (dashboard): use CSRF double-submit cookie pattern
+    if (crossOrigin) {
+      if (!corsHeaders["Access-Control-Allow-Origin"]) {
+        return NextResponse.json(
+          { error: "Origin not allowed" },
+          { status: 403 }
+        );
+      }
+    } else if (!validateCsrf(request)) {
       return NextResponse.json(
         { error: "Invalid CSRF token" },
         { status: 403 }
@@ -31,6 +101,7 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: {
+            ...corsHeaders,
             "X-RateLimit-Limit": RATE_LIMITS.chat.limit.toString(),
             "X-RateLimit-Remaining": "0",
             "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
@@ -44,7 +115,10 @@ export async function POST(request: NextRequest) {
     // Validate request
     const validation = validateChatRequest(body);
     if (!validation.valid) {
-      return NextResponse.json({ error: validation.error }, { status: 400 });
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     const { clientId, siteId, message, context: requestContext } = validation.data;
@@ -101,12 +175,12 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { headers: corsHeaders });
   } catch (error) {
     console.error("Chat API error:", error);
     return NextResponse.json(
       { error: "Failed to process message" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
@@ -187,6 +261,10 @@ async function executeActions(
 }
 
 export async function GET(request: NextRequest) {
+  const corsHeaders = isCrossOriginRequest(request)
+    ? getCorsHeaders(request)
+    : {};
+
   const { searchParams } = new URL(request.url);
   const clientId = searchParams.get("clientId");
   const siteId = searchParams.get("siteId");
@@ -195,7 +273,7 @@ export async function GET(request: NextRequest) {
   if (!clientId || !siteId) {
     return NextResponse.json(
       { error: "clientId and siteId are required" },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
@@ -207,12 +285,15 @@ export async function GET(request: NextRequest) {
       limit,
     });
 
-    return NextResponse.json({ messages: messages.reverse() });
+    return NextResponse.json(
+      { messages: messages.reverse() },
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("Chat history fetch error:", error);
     return NextResponse.json(
       { error: "Failed to fetch chat history" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

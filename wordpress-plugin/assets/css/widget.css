@@ -38,7 +38,8 @@
 .claude-chat-toggle svg {
   width: 28px;
   height: 28px;
-  fill: white;
+  fill: none;
+  stroke: white;
 }
 
 /* Chat Window */
@@ -248,7 +249,8 @@
 .claude-chat-send-btn svg {
   width: 20px;
   height: 20px;
-  fill: white;
+  fill: none;
+  stroke: white;
 }
 
 /* Welcome Message */
