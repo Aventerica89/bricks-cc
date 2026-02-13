@@ -50,8 +50,7 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const { name, url, wordpressApiUrl, bricksApiKey, basecampProjectId } =
-      body;
+    const { name, url, bricksApiKey, basecampProjectId } = body;
 
     if (!name || !url) {
       return NextResponse.json(
@@ -61,13 +60,14 @@ export async function POST(
     }
 
     const siteId = generateId();
+    const derivedApiUrl = `${url.replace(/\/+$/, "")}/wp-json/wp/v2`;
 
     await db.insert(clientSites).values({
       id: siteId,
       clientId,
       name,
       url,
-      wordpressApiUrl: wordpressApiUrl || null,
+      wordpressApiUrl: derivedApiUrl,
       bricksApiKey: bricksApiKey ? safeEncrypt(bricksApiKey) : null,
       basecampProjectId: basecampProjectId
         ? parseInt(basecampProjectId, 10)
@@ -109,8 +109,7 @@ export async function PUT(
 
   try {
     const body = await request.json();
-    const { siteId, name, url, wordpressApiUrl, bricksApiKey, basecampProjectId } =
-      body;
+    const { siteId, name, url, bricksApiKey, basecampProjectId } = body;
 
     if (!siteId) {
       return NextResponse.json(
@@ -135,9 +134,10 @@ export async function PUT(
 
     const updates: Record<string, unknown> = { updatedAt: new Date() };
     if (name !== undefined) updates.name = name;
-    if (url !== undefined) updates.url = url;
-    if (wordpressApiUrl !== undefined)
-      updates.wordpressApiUrl = wordpressApiUrl || null;
+    if (url !== undefined) {
+      updates.url = url;
+      updates.wordpressApiUrl = `${url.replace(/\/+$/, "")}/wp-json/wp/v2`;
+    }
     if (bricksApiKey !== undefined)
       updates.bricksApiKey = bricksApiKey ? safeEncrypt(bricksApiKey) : null;
     if (basecampProjectId !== undefined)

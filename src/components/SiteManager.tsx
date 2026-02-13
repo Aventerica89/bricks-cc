@@ -29,7 +29,6 @@ interface MaskedSite {
 interface SiteFormData {
   name: string;
   url: string;
-  wordpressApiUrl: string;
   bricksApiKey: string;
   basecampProjectId: string;
 }
@@ -37,7 +36,6 @@ interface SiteFormData {
 const EMPTY_FORM: SiteFormData = {
   name: "",
   url: "",
-  wordpressApiUrl: "",
   bricksApiKey: "",
   basecampProjectId: "",
 };
@@ -149,7 +147,6 @@ export default function SiteManager({ clientId }: { clientId: string }) {
     setForm({
       name: site.name,
       url: site.url,
-      wordpressApiUrl: site.wordpressApiUrl || "",
       bricksApiKey: "",
       basecampProjectId: site.basecampProjectId?.toString() || "",
     });
@@ -243,20 +240,11 @@ export default function SiteManager({ clientId }: { clientId: string }) {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                WordPress API URL
-              </label>
-              <input
-                type="url"
-                value={form.wordpressApiUrl}
-                onChange={(e) =>
-                  setForm({ ...form, wordpressApiUrl: e.target.value })
-                }
-                placeholder="https://example.com/wp-json/wp/v2"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
+            {form.url.trim() && (
+              <p className="text-xs text-gray-400">
+                WP API: {form.url.replace(/\/+$/, "")}/wp-json/wp/v2
+              </p>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
