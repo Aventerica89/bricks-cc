@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { chatMessages } from "@/db/schema";
 import { processWithClaude, buildContextString } from "@/lib/claude-cli";
 import { buildContext } from "@/lib/context";
-import { validateChatRequest, sanitizeInput } from "@/utils/validators";
+import { validateChatRequest, sanitizeInput, decodeHtmlEntities } from "@/utils/validators";
 import { SYSTEM_PROMPTS, parseActions } from "@/utils/prompt-templates";
 import { generateId } from "@/utils/formatting";
 import { applyRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
     const executedActions = await executeActions(actions, siteId);
 
     const response: ChatResponse = {
-      response: responseText,
+      response: decodeHtmlEntities(responseText),
       actions: executedActions,
       metadata: {
         tokensUsed: claudeResponse.tokensUsed,
@@ -285,8 +285,16 @@ export async function GET(request: NextRequest) {
       limit,
     });
 
+    const decoded = messages.map((msg) => ({
+      ...msg,
+      userMessage: decodeHtmlEntities(msg.userMessage),
+      claudeResponse: msg.claudeResponse
+        ? decodeHtmlEntities(msg.claudeResponse)
+        : msg.claudeResponse,
+    }));
+
     return NextResponse.json(
-      { messages: messages.reverse() },
+      { messages: decoded.reverse() },
       { headers: corsHeaders }
     );
   } catch (error) {

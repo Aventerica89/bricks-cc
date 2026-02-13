@@ -98,37 +98,36 @@ export function validateFeedbackRequest(
 }
 
 /**
- * Basic HTML entity encoding for serverless environments
- * Used as fallback when DOMPurify is not available
- */
-function escapeHtml(str: string): string {
-  const htmlEntities: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  };
-  return str.replace(/[&<>"']/g, (char) => htmlEntities[char] || char);
-}
-
-/**
- * Sanitize user input to prevent XSS
- * Uses basic HTML escaping (safe for serverless environments)
+ * Sanitize user input to prevent XSS.
+ * Strips HTML tags only — no entity encoding needed because React's JSX
+ * already escapes text content, so encoding quotes/apostrophes causes
+ * them to render literally as &#39; etc.
  */
 export function sanitizeInput(input: string): string {
-  // Strip all HTML tags and escape special characters
-  return escapeHtml(input.replace(/<[^>]*>/g, ''));
+  return input.replace(/<[^>]*>/g, '');
 }
 
 /**
- * Sanitize HTML content (for rich text)
- * Uses basic HTML escaping (safe for serverless environments)
+ * Sanitize HTML content (strip tags for plain text output)
  */
 export function sanitizeHtml(html: string): string {
-  // For serverless, we escape everything to be safe
-  // In a full environment, you could use DOMPurify
-  return escapeHtml(html.replace(/<[^>]*>/g, ''));
+  return html.replace(/<[^>]*>/g, '');
+}
+
+/**
+ * Decode HTML entities in strings stored before the encoding fix.
+ * Handles &amp; &lt; &gt; &quot; &#39; &#x27;
+ */
+export function decodeHtmlEntities(str: string): string {
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&#x27;': "'",
+  };
+  return str.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (match) => entities[match] || match);
 }
 
 /**
