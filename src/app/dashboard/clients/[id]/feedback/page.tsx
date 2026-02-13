@@ -1,15 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowLeft,
-  MessageSquarePlus,
-  Bug,
-  Lightbulb,
-  MessageCircle,
-  ExternalLink,
-  CheckCircle,
-  Clock,
-  Link as LinkIcon,
-} from "lucide-react";
+import { ArrowLeft, MessageSquarePlus } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 
 interface FeedbackPageProps {
@@ -28,23 +18,23 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
         {/* Back link */}
         <Link
           href={`/dashboard/clients/${clientId}`}
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Client
         </Link>
 
         {/* Header */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-50 rounded-lg">
-              <MessageSquarePlus className="w-6 h-6 text-purple-600" />
+            <div className="p-3 bg-teal-500/10 rounded-lg">
+              <MessageSquarePlus className="w-6 h-6 text-teal-500" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-[#f5f5f5]">
                 Client Feedback
               </h1>
-              <p className="text-gray-500">
+              <p className="text-[#a1a1a1]">
                 View and manage feedback submissions
               </p>
             </div>
@@ -54,7 +44,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Submit New Feedback */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
               Submit New Feedback
             </h2>
             <FeedbackForm clientId={clientId} siteId={siteId} />
@@ -62,10 +52,10 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
           {/* Feedback History */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
               Feedback History
             </h2>
-            <div className="bg-white rounded-lg border border-gray-200">
+            <div className="bg-[#161616] rounded-xl border border-[#2a2a2a]">
               <FeedbackHistoryPlaceholder />
             </div>
           </div>
@@ -77,7 +67,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
 function FeedbackHistoryPlaceholder() {
   return (
-    <div className="text-center py-12 text-gray-500">
+    <div className="text-center py-12 text-[#666]">
       <MessageSquarePlus className="w-12 h-12 mx-auto mb-4 opacity-20" />
       <p>No feedback submitted yet.</p>
     </div>

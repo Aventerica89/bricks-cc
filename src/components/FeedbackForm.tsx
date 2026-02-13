@@ -112,13 +112,15 @@ export default function FeedbackForm({
 
   if (isSubmitted) {
     return (
-      <div className={`${embedded ? "" : "bg-white rounded-lg shadow-lg p-6"}`}>
+      <div
+        className={`${embedded ? "" : "bg-[#161616] rounded-xl border border-[#2a2a2a] p-6"}`}
+      >
         <div className="text-center py-8">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <h3 className="text-lg font-semibold text-[#f5f5f5] mb-2">
             Thank You!
           </h3>
-          <p className="text-gray-600">
+          <p className="text-[#a1a1a1]">
             Your feedback has been submitted successfully.
           </p>
         </div>
@@ -127,20 +129,22 @@ export default function FeedbackForm({
   }
 
   return (
-    <div className={`${embedded ? "" : "bg-white rounded-lg shadow-lg"}`}>
+    <div
+      className={`${embedded ? "" : "bg-[#161616] rounded-xl border border-[#2a2a2a]"}`}
+    >
       {/* Header */}
       {!embedded && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
           <div className="flex items-center gap-2">
-            <MessageSquarePlus className="w-5 h-5 text-purple-600" />
-            <h2 className="text-lg font-semibold text-gray-800">
+            <MessageSquarePlus className="w-5 h-5 text-teal-500" />
+            <h2 className="text-lg font-semibold text-[#f5f5f5]">
               Submit Feedback
             </h2>
           </div>
           {onClose && (
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-[#666] hover:text-[#a1a1a1]"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -152,7 +156,7 @@ export default function FeedbackForm({
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Feedback Type Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-[#a1a1a1] mb-3">
             What type of feedback is this?
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -163,8 +167,8 @@ export default function FeedbackForm({
                 onClick={() => setFeedbackType(type)}
                 className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors ${
                   feedbackType === type
-                    ? "border-purple-500 bg-purple-50 text-purple-700"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "border-teal-500 bg-teal-500/10 text-teal-400"
+                    : "border-[#2a2a2a] hover:border-[#3a3a3a] text-[#a1a1a1]"
                 }`}
               >
                 {icon}
@@ -178,7 +182,7 @@ export default function FeedbackForm({
         <div>
           <label
             htmlFor="feedback-message"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-[#a1a1a1] mb-2"
           >
             Your Feedback
           </label>
@@ -190,17 +194,17 @@ export default function FeedbackForm({
               feedbackType === "bug"
                 ? "Please describe the issue you encountered..."
                 : feedbackType === "feature"
-                  ? "Describe the feature you&apos;d like to see..."
+                  ? "Describe the feature you'd like to see..."
                   : "Share your thoughts..."
             }
-            className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full h-32 px-4 py-3 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg resize-none text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
             disabled={isSubmitting}
           />
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-500 text-sm flex items-center gap-2">
+          <div className="text-red-400 text-sm flex items-center gap-2">
             <Bug className="w-4 h-4" />
             {error}
           </div>
@@ -210,7 +214,7 @@ export default function FeedbackForm({
         <button
           type="submit"
           disabled={isSubmitting || !message.trim()}
-          className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-600 disabled:bg-[#2a2a2a] disabled:text-[#666] text-gray-950 font-medium py-3 px-4 rounded-lg transition-colors"
         >
           {isSubmitting ? (
             <>

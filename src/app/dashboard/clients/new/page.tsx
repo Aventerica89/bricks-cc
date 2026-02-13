@@ -67,31 +67,31 @@ export default function NewClientPage() {
       <div className="max-w-2xl mx-auto">
         <Link
           href="/dashboard/clients"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Clients
         </Link>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-teal-500/10 rounded-full flex items-center justify-center">
+              <UserPlus className="w-5 h-5 text-teal-500" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-[#f5f5f5]">
               Add New Client
             </h1>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Name *
               </label>
               <input
@@ -100,12 +100,12 @@ export default function NewClientPage() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="John Smith"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Email *
               </label>
               <input
@@ -114,12 +114,12 @@ export default function NewClientPage() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="john@example.com"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Company
               </label>
               <input
@@ -127,12 +127,12 @@ export default function NewClientPage() {
                 value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })}
                 placeholder="Acme Corp"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Avatar URL
               </label>
               <input
@@ -142,21 +142,21 @@ export default function NewClientPage() {
                   setForm({ ...form, avatarUrl: e.target.value })
                 }
                 placeholder="https://example.com/avatar.jpg"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[#2a2a2a]">
               <Link
                 href="/dashboard/clients"
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg"
+                className="px-4 py-2 text-sm text-[#a1a1a1] hover:text-[#f5f5f5] border border-[#2a2a2a] rounded-lg"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm bg-teal-500 hover:bg-teal-600 disabled:bg-[#2a2a2a] disabled:text-[#666] text-gray-950 rounded-lg transition-colors font-medium"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 Create Client

@@ -135,9 +135,9 @@ export default function ClientSettingsPage() {
       <div className="p-8">
         <div className="max-w-3xl mx-auto">
           <div className="animate-pulse space-y-8">
-            <div className="h-4 bg-gray-200 rounded w-32" />
-            <div className="h-8 bg-gray-200 rounded w-48" />
-            <div className="h-64 bg-gray-200 rounded" />
+            <div className="h-4 bg-[#1e1e1e] rounded w-32" />
+            <div className="h-8 bg-[#1e1e1e] rounded w-48" />
+            <div className="h-64 bg-[#1e1e1e] rounded" />
           </div>
         </div>
       </div>
@@ -148,10 +148,10 @@ export default function ClientSettingsPage() {
     return (
       <div className="p-8">
         <div className="max-w-3xl mx-auto text-center py-12">
-          <p className="text-red-500">{error || "Client not found"}</p>
+          <p className="text-red-400">{error || "Client not found"}</p>
           <Link
             href="/dashboard/clients"
-            className="mt-4 text-purple-600 hover:underline inline-block"
+            className="mt-4 text-teal-500 hover:text-teal-400 inline-block"
           >
             Back to Clients
           </Link>
@@ -165,19 +165,19 @@ export default function ClientSettingsPage() {
       <div className="max-w-3xl mx-auto">
         <Link
           href={`/dashboard/clients/${clientId}`}
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to {client.name}
         </Link>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Client Settings</h1>
-          <p className="text-gray-500">{client.name}</p>
+          <h1 className="text-2xl font-bold text-[#f5f5f5]">Client Settings</h1>
+          <p className="text-[#a1a1a1]">{client.name}</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -191,31 +191,31 @@ export default function ClientSettingsPage() {
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                   Name *
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                   Email *
                 </label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                   Company
                 </label>
                 <input
@@ -224,12 +224,12 @@ export default function ClientSettingsPage() {
                   onChange={(e) =>
                     setForm({ ...form, company: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                   Avatar URL
                 </label>
                 <input
@@ -239,20 +239,20 @@ export default function ClientSettingsPage() {
                     setForm({ ...form, avatarUrl: e.target.value })
                   }
                   placeholder="https://example.com/avatar.jpg"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 />
               </div>
 
               {/* Save Button */}
               <div className="flex items-center justify-end gap-3 pt-2">
                 {saveStatus === "success" && (
-                  <div className="flex items-center gap-1.5 text-green-600 text-sm">
+                  <div className="flex items-center gap-1.5 text-green-400 text-sm">
                     <CheckCircle className="w-4 h-4" />
                     Saved
                   </div>
                 )}
                 {saveStatus === "error" && (
-                  <div className="flex items-center gap-1.5 text-red-600 text-sm">
+                  <div className="flex items-center gap-1.5 text-red-400 text-sm">
                     <AlertCircle className="w-4 h-4" />
                     Failed
                   </div>
@@ -260,7 +260,7 @@ export default function ClientSettingsPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm bg-teal-500 hover:bg-teal-600 disabled:bg-[#2a2a2a] disabled:text-[#666] text-gray-950 rounded-lg transition-colors font-medium"
                 >
                   {saving ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -282,27 +282,27 @@ export default function ClientSettingsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-[#f5f5f5]">
                   Deactivate Client
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#a1a1a1]">
                   Hides this client from the active list. Data is preserved.
                 </p>
               </div>
               {deleteConfirm ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-red-600">Are you sure?</span>
+                  <span className="text-sm text-red-400">Are you sure?</span>
                   <button
                     onClick={handleDeactivate}
                     disabled={deleting}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 disabled:bg-[#2a2a2a] text-white rounded-lg transition-colors"
                   >
                     {deleting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     Yes, Deactivate
                   </button>
                   <button
                     onClick={() => setDeleteConfirm(false)}
-                    className="px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    className="px-3 py-1.5 text-sm text-[#a1a1a1] border border-[#2a2a2a] rounded-lg hover:bg-[#252525]"
                   >
                     Cancel
                   </button>
@@ -310,7 +310,7 @@ export default function ClientSettingsPage() {
               ) : (
                 <button
                   onClick={() => setDeleteConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   Deactivate
@@ -339,22 +339,22 @@ function SettingsSection({
 }) {
   return (
     <div
-      className={`bg-white rounded-lg border ${
-        danger ? "border-red-200" : "border-gray-200"
+      className={`bg-[#161616] rounded-xl border ${
+        danger ? "border-red-500/20" : "border-[#2a2a2a]"
       }`}
     >
       <div
         className={`px-6 py-4 border-b ${
-          danger ? "border-red-200" : "border-gray-200"
+          danger ? "border-red-500/20" : "border-[#2a2a2a]"
         }`}
       >
         <div className="flex items-center gap-3">
-          <div className={danger ? "text-red-600" : "text-purple-600"}>
+          <div className={danger ? "text-red-400" : "text-teal-500"}>
             {icon}
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">{title}</h2>
-            <p className="text-sm text-gray-500">{description}</p>
+            <h2 className="font-semibold text-[#f5f5f5]">{title}</h2>
+            <p className="text-sm text-[#a1a1a1]">{description}</p>
           </div>
         </div>
       </div>
