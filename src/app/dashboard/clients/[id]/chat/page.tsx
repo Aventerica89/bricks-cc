@@ -57,23 +57,25 @@ export default function ChatPage() {
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col">
         <Link
           href={`/dashboard/clients/${clientId}`}
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Client
         </Link>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <MessageSquare className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-teal-500/10 rounded-lg">
+                <MessageSquare className="w-6 h-6 text-teal-500" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1
+                  className="text-xl font-bold text-[#f5f5f5]"
+                >
                   Chat History
                 </h1>
-                <p className="text-gray-500">
+                <p className="text-[#a1a1a1]">
                   {selectedSite ? selectedSite.name : `Client ID: ${clientId}`}
                 </p>
               </div>
@@ -84,7 +86,7 @@ export default function ChatPage() {
                 <select
                   value={selectedSiteId || ""}
                   onChange={(e) => setSelectedSiteId(e.target.value || null)}
-                  className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                  className="appearance-none bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 pr-8 text-sm text-[#f5f5f5] focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50"
                 >
                   <option value="">Select a site...</option>
                   {sites.map((site) => (
@@ -93,28 +95,28 @@ export default function ChatPage() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-[#666] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             )}
           </div>
         </div>
 
         {loading ? (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
+          <div className="flex-1 flex items-center justify-center text-[#a1a1a1]">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
             Loading sites...
           </div>
         ) : sites.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center text-gray-500">
+            <div className="text-center text-[#666]">
               <Globe className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p className="font-medium">No sites configured</p>
+              <p className="font-medium text-[#a1a1a1]">No sites configured</p>
               <p className="text-sm mt-1">
                 Add a site to start chatting.
               </p>
               <Link
                 href={`/dashboard/clients/${clientId}`}
-                className="text-purple-600 hover:text-purple-700 mt-3 inline-block text-sm"
+                className="text-teal-500 hover:text-teal-400 mt-3 inline-block text-sm"
               >
                 Go to client settings
               </Link>
@@ -122,16 +124,16 @@ export default function ChatPage() {
           </div>
         ) : !selectedSiteId ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center text-gray-500">
+            <div className="text-center text-[#666]">
               <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p className="font-medium">Select a site to begin</p>
+              <p className="font-medium text-[#a1a1a1]">Select a site to begin</p>
               <p className="text-sm mt-1">
                 Choose a site from the dropdown above.
               </p>
             </div>
           </div>
         ) : (
-          <div className="flex-1 bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="flex-1 bg-[#161616] rounded-xl border border-[#2a2a2a] overflow-hidden">
             <ChatInterface
               key={selectedSiteId}
               clientId={clientId}

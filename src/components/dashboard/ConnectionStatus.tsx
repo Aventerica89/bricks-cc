@@ -29,7 +29,7 @@ export function ConnectionStatus() {
 
   return (
     <div className="px-4 py-3 space-y-2">
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+      <p className="text-xs font-medium text-[#666] uppercase tracking-wider">
         Services
       </p>
       <StatusPill
@@ -60,13 +60,13 @@ function StatusPill({
       <div
         className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${
           connected
-            ? "bg-green-50 text-green-700"
-            : "bg-gray-100 text-gray-500"
+            ? "bg-green-500/10 text-green-400"
+            : "bg-[#1e1e1e] text-[#666]"
         }`}
       >
         <div
           className={`w-1.5 h-1.5 rounded-full ${
-            connected ? "bg-green-500" : "bg-gray-400"
+            connected ? "bg-green-500" : "bg-[#666]"
           }`}
         />
         {icon}

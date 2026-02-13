@@ -51,9 +51,13 @@ export default function DashboardPage() {
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">
-            Bricks CC Teaching System overview
+          <h1
+            className="text-2xl font-bold text-[#f5f5f5]"
+          >
+            Dashboard
+          </h1>
+          <p className="text-[#a1a1a1]">
+            Client sites, sessions, and activity overview
           </p>
         </div>
 
@@ -89,29 +93,29 @@ export default function DashboardPage() {
             title="Teaching System"
             description="Create lessons and scenarios to train the AI agent"
             href="/teaching"
-            icon={<BookOpen className="w-8 h-8 text-purple-600" />}
+            icon={<BookOpen className="w-8 h-8 text-teal-500" />}
           />
           <QuickActionCard
             title="Build System"
             description="Generate Bricks code with the AI-powered structure agent"
             href="/build"
-            icon={<Code2 className="w-8 h-8 text-purple-600" />}
+            icon={<Code2 className="w-8 h-8 text-teal-500" />}
           />
         </div>
 
         {/* Recent Activity */}
         {recentSessions.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-gray-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <Activity className="w-5 h-5 text-[#a1a1a1]" />
+                <h2 className="text-lg font-semibold text-[#f5f5f5]">
                   Recent Build Activity
                 </h2>
               </div>
               <Link
                 href="/build"
-                className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                className="text-sm text-teal-500 hover:text-teal-400 font-medium"
               >
                 View all
               </Link>
@@ -129,10 +133,10 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={session.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-[#1e1e1e] rounded-lg"
                   >
                     <div className="min-w-0 flex-1 mr-4">
-                      <span className="text-sm font-medium text-gray-900 truncate block">
+                      <span className="text-sm font-medium text-[#f5f5f5] truncate block">
                         {description}
                       </span>
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -140,27 +144,27 @@ export default function DashboardPage() {
                           <span
                             className={`text-xs px-1.5 py-0.5 rounded ${
                               aiGenerated
-                                ? "bg-green-100 text-green-700"
-                                : "bg-orange-100 text-orange-700"
+                                ? "bg-green-500/10 text-green-400"
+                                : "bg-teal-500/10 text-teal-400"
                             }`}
                           >
                             {aiGenerated ? "AI" : "Template"}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-[#666]">
                           {new Date(session.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
                     {confidence !== undefined && (
                       <div className="flex items-center gap-2">
-                        <div className="w-12 bg-gray-200 rounded-full h-1.5">
+                        <div className="w-12 bg-[#2a2a2a] rounded-full h-1.5">
                           <div
-                            className="bg-purple-600 h-1.5 rounded-full"
+                            className="bg-teal-500 h-1.5 rounded-full"
                             style={{ width: `${confidence * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs font-medium text-purple-600 w-8 text-right">
+                        <span className="text-xs font-medium text-teal-500 w-8 text-right">
                           {(confidence * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -190,16 +194,16 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="bg-white rounded-lg border border-gray-200 p-6 hover:border-purple-300 hover:shadow-md transition-all group"
+      className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6 hover:border-teal-500/30 hover:glow-teal transition-all group"
     >
       <div className="flex items-center justify-between mb-4">
-        <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
+        <div className="p-2 bg-teal-500/10 rounded-lg text-teal-500">
           {icon}
         </div>
-        <ArrowUpRight className="w-5 h-5 text-gray-300 group-hover:text-purple-600 transition-colors" />
+        <ArrowUpRight className="w-5 h-5 text-[#666] group-hover:text-teal-500 transition-colors" />
       </div>
-      <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
-      <span className="text-sm text-gray-500">{title}</span>
+      <div className="text-2xl font-bold text-[#f5f5f5] mb-1">{value}</div>
+      <span className="text-sm text-[#a1a1a1]">{title}</span>
     </Link>
   );
 }
@@ -218,17 +222,17 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="bg-white rounded-lg border border-gray-200 p-8 hover:border-purple-300 hover:shadow-md transition-all group"
+      className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-8 hover:border-teal-500/30 hover:glow-teal transition-all group"
     >
       <div className="flex items-start gap-4">
-        <div className="p-3 bg-purple-50 rounded-xl">{icon}</div>
+        <div className="p-3 bg-teal-500/10 rounded-xl">{icon}</div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-700 transition-colors">
+          <h3 className="text-lg font-semibold text-[#f5f5f5] group-hover:text-teal-500 transition-colors">
             {title}
           </h3>
-          <p className="text-sm text-gray-600 mt-1">{description}</p>
+          <p className="text-sm text-[#a1a1a1] mt-1">{description}</p>
         </div>
-        <ArrowUpRight className="w-5 h-5 text-gray-300 group-hover:text-purple-600 transition-colors mt-1" />
+        <ArrowUpRight className="w-5 h-5 text-[#666] group-hover:text-teal-500 transition-colors mt-1" />
       </div>
     </Link>
   );

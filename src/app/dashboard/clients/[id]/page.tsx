@@ -37,17 +37,17 @@ export default async function ClientPage({ params }: ClientPageProps) {
         {/* Back link */}
         <Link
           href="/dashboard/clients"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Clients
         </Link>
 
         {/* Client Header */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
+        <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6 mb-8">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 bg-teal-500/10 rounded-full flex items-center justify-center overflow-hidden">
                 {client.avatarUrl ? (
                   <img
                     src={client.avatarUrl}
@@ -55,24 +55,26 @@ export default async function ClientPage({ params }: ClientPageProps) {
                     className="w-16 h-16 object-cover"
                   />
                 ) : (
-                  <span className="text-purple-600 font-bold text-2xl">
+                  <span className="text-teal-500 font-bold text-2xl">
                     {client.name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1
+                  className="text-2xl font-bold text-[#f5f5f5]"
+                >
                   {client.name}
                 </h1>
-                <p className="text-gray-500">{client.email}</p>
+                <p className="text-[#a1a1a1]">{client.email}</p>
                 {client.company && (
-                  <p className="text-sm text-gray-400">{client.company}</p>
+                  <p className="text-sm text-[#666]">{client.company}</p>
                 )}
               </div>
             </div>
             <Link
               href={`/dashboard/clients/${id}/settings`}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] px-4 py-2 border border-[#2a2a2a] rounded-lg hover:bg-[#1e1e1e] transition-colors"
             >
               <Settings className="w-4 h-4" />
               Settings
@@ -123,11 +125,11 @@ function ActionCard({
   return (
     <Link
       href={href}
-      className="bg-white rounded-lg border border-gray-200 p-6 hover:border-purple-300 hover:shadow-md transition-all"
+      className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6 hover:border-teal-500/30 hover:glow-teal transition-all"
     >
-      <div className="text-purple-600 mb-4">{icon}</div>
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-500">{description}</p>
+      <div className="text-teal-500 mb-4">{icon}</div>
+      <h3 className="font-semibold text-[#f5f5f5] mb-1">{title}</h3>
+      <p className="text-sm text-[#a1a1a1]">{description}</p>
     </Link>
   );
 }

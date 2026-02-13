@@ -25,14 +25,14 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <nav className="bg-[#161616]/80 backdrop-blur-md border-b border-[#2a2a2a] sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <Link
               href="/"
-              className="text-lg font-bold text-gray-900 hover:text-purple-600 transition-colors"
+              className="text-lg font-bold text-teal-500 hover:text-teal-400 transition-colors"
             >
-              Bricks CC
+              WP Dispatch
             </Link>
 
             <div className="flex items-center gap-1">
@@ -46,8 +46,8 @@ export default function NavBar() {
                     href={href}
                     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-purple-100 text-purple-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        ? "bg-teal-500/10 text-teal-500 border border-teal-500/20"
+                        : "text-[#a1a1a1] hover:text-[#f5f5f5] hover:bg-[#252525]"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -58,8 +58,8 @@ export default function NavBar() {
 
               <button
                 onClick={() => setShowHelp(true)}
-                className="ml-2 p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors"
-                title="How to use Bricks CC"
+                className="ml-2 p-1.5 text-[#666] hover:text-teal-500 hover:bg-teal-500/10 rounded-md transition-colors"
+                title="How to use WP Dispatch"
               >
                 <HelpCircle className="w-5 h-5" />
               </button>

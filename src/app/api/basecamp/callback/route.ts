@@ -6,7 +6,7 @@ import { safeEncrypt } from "@/lib/crypto";
 
 const TOKEN_URL = "https://launchpad.37signals.com/authorization/token";
 const SETTINGS_ID = "default";
-const REDIRECT_BASE = "https://bricks-cc.jbcloud.app";
+const REDIRECT_BASE = "https://dispatch.jbcloud.app";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

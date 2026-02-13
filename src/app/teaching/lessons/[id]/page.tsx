@@ -248,7 +248,7 @@ export default function LessonDetailPage({
         );
       case "draft":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-teal-500/10 text-teal-400">
             <Clock className="w-3.5 h-3.5" />
             Draft
           </span>

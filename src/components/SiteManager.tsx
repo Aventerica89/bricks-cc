@@ -162,8 +162,8 @@ export default function SiteManager({ clientId }: { clientId: string }) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center gap-2 text-gray-500">
+      <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
+        <div className="flex items-center gap-2 text-[#a1a1a1]">
           <Loader2 className="w-4 h-4 animate-spin" />
           Loading sites...
         </div>
@@ -172,16 +172,16 @@ export default function SiteManager({ clientId }: { clientId: string }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Client Sites</h2>
+        <h2 className="text-lg font-semibold text-[#f5f5f5]">Client Sites</h2>
         {!showForm && (
           <button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 text-sm bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 text-sm bg-teal-500 hover:bg-teal-600 text-gray-950 px-3 py-1.5 rounded-lg transition-colors font-medium"
           >
             <Plus className="w-4 h-4" />
             Add Site
@@ -190,20 +190,20 @@ export default function SiteManager({ clientId }: { clientId: string }) {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
           {error}
         </div>
       )}
 
       {showForm && (
-        <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="mb-6 p-4 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium text-gray-900">
+            <h3 className="font-medium text-[#f5f5f5]">
               {editingSiteId ? "Edit Site" : "Add New Site"}
             </h3>
             <button
               onClick={resetForm}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-[#666] hover:text-[#a1a1a1]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -211,7 +211,7 @@ export default function SiteManager({ clientId }: { clientId: string }) {
 
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Site Name *
               </label>
               <input
@@ -221,12 +221,12 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                   setForm({ ...form, name: e.target.value })
                 }
                 placeholder="My Client Site"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Site URL *
               </label>
               <input
@@ -236,21 +236,21 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                   setForm({ ...form, url: e.target.value })
                 }
                 placeholder="https://example.com"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             {form.url.trim() && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#666]">
                 WP API: {form.url.replace(/\/+$/, "")}/wp-json/wp/v2
               </p>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Bricks API Key
                 {editingSiteId && (
-                  <span className="text-gray-400 font-normal ml-1">
+                  <span className="text-[#666] font-normal ml-1">
                     (leave blank to keep current)
                   </span>
                 )}
@@ -264,12 +264,12 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                 placeholder={
                   editingSiteId ? "Enter new key to change" : "Enter API key"
                 }
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#a1a1a1] mb-1">
                 Basecamp Project ID
               </label>
               <input
@@ -279,21 +279,21 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                   setForm({ ...form, basecampProjectId: e.target.value })
                 }
                 placeholder="12345678"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={resetForm}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg"
+                className="px-4 py-2 text-sm text-[#a1a1a1] hover:text-[#f5f5f5] border border-[#2a2a2a] rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm bg-teal-500 hover:bg-teal-600 disabled:bg-[#2a2a2a] disabled:text-[#666] text-gray-950 rounded-lg transition-colors font-medium"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editingSiteId ? "Update Site" : "Add Site"}
@@ -304,12 +304,12 @@ export default function SiteManager({ clientId }: { clientId: string }) {
       )}
 
       {sites.length === 0 && !showForm ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[#666]">
           <Globe className="w-12 h-12 mx-auto mb-4 opacity-20" />
-          <p>No sites configured yet.</p>
+          <p className="text-[#a1a1a1]">No sites configured yet.</p>
           <button
             onClick={() => setShowForm(true)}
-            className="text-purple-600 hover:text-purple-700 mt-2 inline-block"
+            className="text-teal-500 hover:text-teal-400 mt-2 inline-block"
           >
             Add your first site
           </button>
@@ -319,22 +319,22 @@ export default function SiteManager({ clientId }: { clientId: string }) {
           {sites.map((site) => (
             <div
               key={site.id}
-              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              className="flex items-center justify-between p-4 border border-[#2a2a2a] rounded-lg hover:border-[#3a3a3a] transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <Globe className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Globe className="w-5 h-5 text-[#666] flex-shrink-0" />
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900 truncate">
+                    <h3 className="font-medium text-[#f5f5f5] truncate">
                       {site.name}
                     </h3>
                     {site.hasApiKey ? (
-                      <span className="flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">
                         <Key className="w-3 h-3" />
                         API Key
                       </span>
                     ) : (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-[#1e1e1e] text-[#666] px-2 py-0.5 rounded-full">
                         No API Key
                       </span>
                     )}
@@ -343,7 +343,7 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                     href={site.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1"
+                    className="text-sm text-[#a1a1a1] hover:text-teal-500 flex items-center gap-1"
                   >
                     {site.url}
                     <ExternalLink className="w-3 h-3" />
@@ -354,16 +354,16 @@ export default function SiteManager({ clientId }: { clientId: string }) {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {deleteConfirm === site.id ? (
                   <>
-                    <span className="text-xs text-red-600 mr-1">Delete?</span>
+                    <span className="text-xs text-red-400 mr-1">Delete?</span>
                     <button
                       onClick={() => handleDelete(site.id)}
-                      className="text-red-600 hover:text-red-700 text-xs font-medium px-2 py-1 border border-red-200 rounded"
+                      className="text-red-400 hover:text-red-300 text-xs font-medium px-2 py-1 border border-red-500/20 rounded"
                     >
                       Yes
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(null)}
-                      className="text-gray-500 hover:text-gray-700 text-xs px-2 py-1 border border-gray-200 rounded"
+                      className="text-[#a1a1a1] hover:text-[#f5f5f5] text-xs px-2 py-1 border border-[#2a2a2a] rounded"
                     >
                       No
                     </button>
@@ -372,14 +372,14 @@ export default function SiteManager({ clientId }: { clientId: string }) {
                   <>
                     <button
                       onClick={() => startEdit(site)}
-                      className="p-1.5 text-gray-400 hover:text-purple-600 rounded-lg hover:bg-gray-50"
+                      className="p-1.5 text-[#666] hover:text-teal-500 rounded-lg hover:bg-teal-500/10"
                       title="Edit site"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(site.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-50"
+                      className="p-1.5 text-[#666] hover:text-red-400 rounded-lg hover:bg-red-500/10"
                       title="Delete site"
                     >
                       <Trash2 className="w-4 h-4" />

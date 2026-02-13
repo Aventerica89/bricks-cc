@@ -19,8 +19,8 @@ import {
 } from "lucide-react";
 
 const BASECAMP_CLIENT_ID = process.env.NEXT_PUBLIC_BASECAMP_CLIENT_ID ?? "";
-const REDIRECT_URI = "https://bricks-cc.jbcloud.app/api/basecamp/callback";
-const WEBHOOK_URL = "https://bricks-cc.jbcloud.app/api/basecamp/webhooks";
+const REDIRECT_URI = "https://dispatch.jbcloud.app/api/basecamp/callback";
+const WEBHOOK_URL = "https://dispatch.jbcloud.app/api/basecamp/webhooks";
 
 const BASECAMP_AUTH_URL =
   "https://launchpad.37signals.com/authorization/new" +
@@ -42,8 +42,8 @@ export default function SettingsPage() {
       fallback={
         <div className="p-8">
           <div className="max-w-4xl mx-auto animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-48" />
-            <div className="h-48 bg-gray-200 rounded" />
+            <div className="h-8 bg-[#1e1e1e] rounded w-48" />
+            <div className="h-48 bg-[#1e1e1e] rounded" />
           </div>
         </div>
       }
@@ -181,9 +181,9 @@ function SettingsContent() {
       <div className="p-8">
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-48" />
-            <div className="h-48 bg-gray-200 rounded" />
-            <div className="h-48 bg-gray-200 rounded" />
+            <div className="h-8 bg-[#1e1e1e] rounded w-48" />
+            <div className="h-48 bg-[#1e1e1e] rounded" />
+            <div className="h-48 bg-[#1e1e1e] rounded" />
           </div>
         </div>
       </div>
@@ -198,8 +198,8 @@ function SettingsContent() {
           <div
             className={`mb-6 px-4 py-3 rounded-lg text-sm flex items-center gap-2 ${
               searchParams.get("error")
-                ? "bg-red-50 text-red-800 border border-red-200"
-                : "bg-green-50 text-green-800 border border-green-200"
+                ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                : "bg-green-500/10 text-green-400 border border-green-500/20"
             }`}
           >
             {searchParams.get("error") ? (
@@ -213,8 +213,12 @@ function SettingsContent() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600">
+          <h1
+            className="text-2xl font-bold text-[#f5f5f5]"
+          >
+            Settings
+          </h1>
+          <p className="text-[#a1a1a1]">
             Configure integrations and platform settings
           </p>
         </div>
@@ -228,12 +232,12 @@ function SettingsContent() {
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   CLI Status
                 </label>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-[#a1a1a1]">
                     Claude CLI is available
                   </span>
                 </div>
@@ -244,9 +248,9 @@ function SettingsContent() {
                     type="checkbox"
                     checked={claudeEnabled}
                     onChange={(e) => setClaudeEnabled(e.target.checked)}
-                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    className="rounded border-[#2a2a2a] bg-[#1e1e1e] text-teal-500 focus:ring-teal-500/50"
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-[#a1a1a1]">
                     Enable Claude AI responses
                   </span>
                 </label>
@@ -263,25 +267,25 @@ function SettingsContent() {
             <div className="space-y-4">
               {/* Connection status + OAuth button */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   Connection
                 </label>
                 {basecampConnected ? (
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg">
-                      <Link className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-green-700 font-medium">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+                      <Link className="w-4 h-4 text-green-400" />
+                      <span className="text-sm text-green-400 font-medium">
                         Connected
                       </span>
                       {basecampLast4 && (
-                        <span className="text-xs text-green-500">
+                        <span className="text-xs text-green-500/70">
                           (token ...{basecampLast4})
                         </span>
                       )}
                     </div>
                     <button
                       onClick={handleDisconnectBasecamp}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 border border-red-200 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-lg transition-colors"
                     >
                       <Unlink className="w-3.5 h-3.5" />
                       Disconnect
@@ -300,7 +304,7 @@ function SettingsContent() {
 
               {/* Account ID */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   Account ID
                 </label>
                 <input
@@ -308,13 +312,13 @@ function SettingsContent() {
                   value={basecampAccountId}
                   onChange={(e) => setBasecampAccountId(e.target.value)}
                   placeholder="Your Basecamp Account ID"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50"
                 />
               </div>
 
               {/* Webhook URL (read-only) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   Webhook URL (for receiving updates)
                 </label>
                 <div className="flex gap-2">
@@ -322,14 +326,14 @@ function SettingsContent() {
                     type="text"
                     readOnly
                     value={WEBHOOK_URL}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 font-mono text-sm"
+                    className="flex-1 px-4 py-2 bg-[#0c0c0c] border border-[#2a2a2a] rounded-lg text-[#666] font-mono text-sm"
                   />
                   <button
                     onClick={copyWebhookUrl}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#2a2a2a] rounded-lg hover:bg-[#1e1e1e] text-sm text-[#a1a1a1] transition-colors"
                   >
                     {webhookCopied ? (
-                      <Check className="w-4 h-4 text-green-600" />
+                      <Check className="w-4 h-4 text-green-400" />
                     ) : (
                       <Copy className="w-4 h-4" />
                     )}
@@ -349,7 +353,7 @@ function SettingsContent() {
             <div className="space-y-4">
               {/* Site URL */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   Site URL
                 </label>
                 <input
@@ -357,17 +361,17 @@ function SettingsContent() {
                   value={bricksSiteUrl}
                   onChange={(e) => setBricksSiteUrl(e.target.value)}
                   placeholder="https://your-site.com"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50"
                 />
               </div>
 
               {/* API Key */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                   Default API Key
                 </label>
                 {bricksKeyConnected && !bricksApiKey && (
-                  <p className="text-xs text-green-600 mb-1">
+                  <p className="text-xs text-green-400 mb-1">
                     Key stored (encrypted). Enter a new value to replace it.
                   </p>
                 )}
@@ -381,12 +385,12 @@ function SettingsContent() {
                         ? "Enter new key to replace..."
                         : "Default Bricks API Key (optional)"
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-10"
+                    className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowBricksKey(!showBricksKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] hover:text-[#a1a1a1]"
                   >
                     {showBricksKey ? (
                       <EyeOff className="w-4 h-4" />
@@ -395,7 +399,7 @@ function SettingsContent() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-[#666] mt-1">
                   Site-specific keys can be configured per client site
                 </p>
               </div>
@@ -405,13 +409,13 @@ function SettingsContent() {
           {/* Save Button */}
           <div className="flex items-center justify-end gap-4">
             {saveStatus === "success" && (
-              <div className="flex items-center gap-2 text-green-600">
+              <div className="flex items-center gap-2 text-green-400">
                 <CheckCircle className="w-4 h-4" />
                 <span className="text-sm">Settings saved</span>
               </div>
             )}
             {saveStatus === "error" && (
-              <div className="flex items-center gap-2 text-red-600">
+              <div className="flex items-center gap-2 text-red-400">
                 <AlertCircle className="w-4 h-4" />
                 <span className="text-sm">Failed to save</span>
               </div>
@@ -419,7 +423,7 @@ function SettingsContent() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 disabled:bg-teal-500/50 text-gray-950 px-6 py-2 rounded-lg transition-colors font-medium"
             >
               <Save className="w-4 h-4" />
               {isSaving ? "Saving..." : "Save Settings"}
@@ -443,13 +447,13 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div className="bg-[#161616] rounded-xl border border-[#2a2a2a]">
+      <div className="px-6 py-4 border-b border-[#2a2a2a]">
         <div className="flex items-center gap-3">
-          <div className="text-purple-600">{icon}</div>
+          <div className="text-teal-500">{icon}</div>
           <div>
-            <h2 className="font-semibold text-gray-900">{title}</h2>
-            <p className="text-sm text-gray-500">{description}</p>
+            <h2 className="font-semibold text-[#f5f5f5]">{title}</h2>
+            <p className="text-sm text-[#a1a1a1]">{description}</p>
           </div>
         </div>
       </div>

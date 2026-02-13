@@ -49,21 +49,23 @@ export default function InstructionsModal({
       }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto instructions-modal"
+        className="relative bg-[#161616] border border-[#2a2a2a] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto instructions-modal"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
-          <h2 className="text-xl font-bold text-gray-900">
-            How to Use Bricks CC
+        <div className="sticky top-0 bg-[#161616] border-b border-[#2a2a2a] px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+          <h2
+            className="text-xl font-bold text-[#f5f5f5]"
+          >
+            How to Use WP Dispatch
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-[#666] hover:text-[#f5f5f5] hover:bg-[#252525] rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -73,10 +75,10 @@ export default function InstructionsModal({
         <div className="px-6 py-6 space-y-8">
           {/* Overview */}
           <div>
-            <p className="text-gray-600 leading-relaxed">
-              Bricks CC is an AI-powered system for generating valid Bricks
-              Builder components. It works in two phases: <strong>teach</strong>{" "}
-              the AI with examples, then <strong>build</strong> components using
+            <p className="text-[#a1a1a1] leading-relaxed">
+              WP Dispatch is an AI-powered system for managing WordPress sites with Bricks
+              Builder components. It works in two phases: <strong className="text-[#f5f5f5]">teach</strong>{" "}
+              the AI with examples, then <strong className="text-[#f5f5f5]">build</strong> components using
               what it learned.
             </p>
           </div>
@@ -85,9 +87,9 @@ export default function InstructionsModal({
           <Section
             icon={BookOpen}
             title="Teaching System"
-            color="purple"
+            color="primary"
           >
-            <p className="text-gray-600 mb-3">
+            <p className="text-[#a1a1a1] mb-3">
               Train the AI by creating lessons with scenarios (example
               input/output pairs).
             </p>
@@ -111,9 +113,9 @@ export default function InstructionsModal({
           <Section
             icon={Code2}
             title="Build System"
-            color="pink"
+            color="primary"
           >
-            <p className="text-gray-600 mb-3">
+            <p className="text-[#a1a1a1] mb-3">
               Generate Bricks components using the trained AI agent.
             </p>
             <StepList
@@ -139,21 +141,21 @@ export default function InstructionsModal({
             title="Plugin Resources & ACSS Docs"
             color="green"
           >
-            <p className="text-gray-600 mb-3">
+            <p className="text-[#a1a1a1] mb-3">
               These categories are for reference material, not training data.
             </p>
             <div className="space-y-2">
-              <div className="flex items-start gap-3 text-sm text-gray-600">
-                <Package className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+              <div className="flex items-start gap-3 text-sm text-[#a1a1a1]">
+                <Package className="w-4 h-4 mt-0.5 text-green-400 shrink-0" />
                 <span>
-                  <strong>Plugin Resources</strong> — Upload plugin files and
+                  <strong className="text-[#f5f5f5]">Plugin Resources</strong> — Upload plugin files and
                   assets for reference during development.
                 </span>
               </div>
-              <div className="flex items-start gap-3 text-sm text-gray-600">
-                <FileText className="w-4 h-4 mt-0.5 text-orange-500 shrink-0" />
+              <div className="flex items-start gap-3 text-sm text-[#a1a1a1]">
+                <FileText className="w-4 h-4 mt-0.5 text-teal-500 shrink-0" />
                 <span>
-                  <strong>ACSS Docs</strong> — Links to Automatic CSS
+                  <strong className="text-[#f5f5f5]">ACSS Docs</strong> — Links to Automatic CSS
                   documentation for variable and utility class reference.
                 </span>
               </div>
@@ -164,9 +166,9 @@ export default function InstructionsModal({
           <Section
             icon={LayoutDashboard}
             title="Dashboard"
-            color="blue"
+            color="primary"
           >
-            <p className="text-gray-600">
+            <p className="text-[#a1a1a1]">
               The dashboard shows an overview of your lessons, scenarios, and
               build sessions. Use it to track progress and quickly navigate to
               recent work.
@@ -174,19 +176,19 @@ export default function InstructionsModal({
           </Section>
 
           {/* Workflow Summary */}
-          <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+          <div className="bg-[#1e1e1e] rounded-xl p-5 border border-[#2a2a2a]">
+            <h3 className="text-sm font-semibold text-[#f5f5f5] uppercase tracking-wide mb-3">
               Typical Workflow
             </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+            <div className="flex items-center gap-2 text-sm text-[#a1a1a1] flex-wrap">
               <WorkflowStep label="Create Lesson" />
-              <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[#666] shrink-0" />
               <WorkflowStep label="Add Scenarios" />
-              <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[#666] shrink-0" />
               <WorkflowStep label="Fill Training Data" />
-              <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[#666] shrink-0" />
               <WorkflowStep label="Run Build" />
-              <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[#666] shrink-0" />
               <WorkflowStep label="Review Output" />
             </div>
           </div>
@@ -208,10 +210,8 @@ function Section({
   children: React.ReactNode;
 }) {
   const colorMap: Record<string, string> = {
-    purple: "bg-purple-100 text-purple-600",
-    pink: "bg-pink-100 text-pink-600",
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
+    primary: "bg-teal-500/10 text-teal-500",
+    green: "bg-green-500/10 text-green-400",
   };
 
   return (
@@ -220,7 +220,7 @@ function Section({
         <div className={`p-2 rounded-lg ${colorMap[color]}`}>
           <Icon className="w-5 h-5" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-[#f5f5f5]">{title}</h3>
       </div>
       {children}
     </div>
@@ -231,8 +231,8 @@ function StepList({ steps }: { steps: string[] }) {
   return (
     <ol className="space-y-2 mb-3">
       {steps.map((step, i) => (
-        <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
-          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-gray-700 text-xs font-medium shrink-0 mt-0.5">
+        <li key={i} className="flex items-start gap-3 text-sm text-[#a1a1a1]">
+          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#252525] text-teal-500 text-xs font-medium shrink-0 mt-0.5">
             {i + 1}
           </span>
           {step}
@@ -244,16 +244,16 @@ function StepList({ steps }: { steps: string[] }) {
 
 function Tip({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
-      <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-      <p className="text-sm text-amber-800">{children}</p>
+    <div className="flex items-start gap-2 bg-teal-500/10 border border-teal-500/20 rounded-lg p-3">
+      <Lightbulb className="w-4 h-4 text-teal-500 shrink-0 mt-0.5" />
+      <p className="text-sm text-teal-200">{children}</p>
     </div>
   );
 }
 
 function WorkflowStep({ label }: { label: string }) {
   return (
-    <span className="px-3 py-1 bg-white border border-gray-200 rounded-full text-gray-700 font-medium">
+    <span className="px-3 py-1 bg-[#252525] border border-[#2a2a2a] rounded-full text-[#a1a1a1] font-medium">
       {label}
     </span>
   );
