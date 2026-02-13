@@ -76,6 +76,12 @@ export async function processWithClaude(
 export function buildContextString(context: ChatContext): string {
   const parts: string[] = [];
 
+  if (context.siteName) {
+    parts.push(`Site: ${context.siteName}`);
+  }
+  if (context.siteUrl) {
+    parts.push(`Website: ${context.siteUrl}`);
+  }
   parts.push(`Client ID: ${context.clientId}`);
   parts.push(`Site ID: ${context.siteId}`);
 

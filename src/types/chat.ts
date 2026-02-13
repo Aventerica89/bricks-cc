@@ -63,6 +63,8 @@ export interface BasecampProjectDetail {
 export interface ChatContext {
   clientId: string;
   siteId: string;
+  siteName?: string;
+  siteUrl?: string;
   basecampData?: BasecampProjectData;
   basecampProjects?: BasecampProjectSummary[];
   basecampDetails?: BasecampProjectDetail[];

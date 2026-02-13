@@ -36,10 +36,12 @@ export async function buildContext(
     context.recentMessages = recentMessages;
   }
 
-  // Auto-lookup basecampProjectId from site record if not provided
-  if (!options.basecampProjectId) {
-    const siteInfo = await getClientSiteInfo(options.clientId, options.siteId);
-    if (siteInfo?.basecampProjectId) {
+  // Always look up site info for name/URL context
+  const siteInfo = await getClientSiteInfo(options.clientId, options.siteId);
+  if (siteInfo) {
+    context.siteName = siteInfo.siteName;
+    context.siteUrl = siteInfo.siteUrl;
+    if (!options.basecampProjectId && siteInfo.basecampProjectId) {
       options = { ...options, basecampProjectId: siteInfo.basecampProjectId };
     }
   }
@@ -47,7 +49,7 @@ export async function buildContext(
   // Fetch Basecamp data with 8s timeout to avoid Vercel function timeout
   try {
     const basecampData = await Promise.race([
-      fetchBasecampContext(options.basecampProjectId),
+      fetchBasecampContext(options.basecampProjectId, context.siteName),
       new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000)),
     ]);
 
@@ -90,8 +92,9 @@ export async function buildContext(
 /**
  * Fetch Basecamp context data with minimal API calls.
  * Gets project list (1 call) + summary for ONE project (4-5 calls).
+ * If no targetProjectId, auto-matches siteName against project names.
  */
-async function fetchBasecampContext(targetProjectId?: number) {
+async function fetchBasecampContext(targetProjectId?: number, siteName?: string) {
   const basecampClient = await createBasecampClientFromSettings();
   const allProjects = await basecampClient.getProjects();
 
@@ -103,8 +106,24 @@ async function fetchBasecampContext(targetProjectId?: number) {
     url: p.app_url,
   }));
 
-  // Only fetch detailed summary for ONE project to stay fast
-  const projectToDetail = targetProjectId || allProjects[0]?.id;
+  // Auto-match: if no explicit project ID, find the project whose name
+  // best matches the site name (case-insensitive substring match)
+  let projectToDetail = targetProjectId;
+  if (!projectToDetail && siteName) {
+    const siteNameLower = siteName.toLowerCase();
+    const matched = allProjects.find((p) =>
+      p.name.toLowerCase().includes(siteNameLower) ||
+      siteNameLower.includes(p.name.toLowerCase())
+    );
+    if (matched) {
+      projectToDetail = matched.id;
+      console.log(`[Basecamp] Auto-matched site "${siteName}" → project "${matched.name}" (${matched.id})`);
+    }
+  }
+  if (!projectToDetail) {
+    projectToDetail = allProjects[0]?.id;
+  }
+
   const details: NonNullable<import("@/types/chat").ChatContext["basecampDetails"]> = [];
 
   if (projectToDetail) {
@@ -183,11 +202,13 @@ export async function getClientSiteInfo(
   clientId: string,
   siteId: string
 ): Promise<{
+  siteName?: string;
   siteUrl?: string;
   basecampProjectId?: number;
 } | null> {
   const site = await db
     .select({
+      name: clientSites.name,
       url: clientSites.url,
       basecampProjectId: clientSites.basecampProjectId,
     })
@@ -200,6 +221,7 @@ export async function getClientSiteInfo(
   if (!site[0]) return null;
 
   return {
+    siteName: site[0].name,
     siteUrl: site[0].url,
     basecampProjectId: site[0].basecampProjectId ?? undefined,
   };
