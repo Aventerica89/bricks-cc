@@ -48,33 +48,50 @@ export async function buildContext(
   try {
     const basecampClient = await createBasecampClientFromSettings();
 
+    const projects = await basecampClient.getProjects();
+    context.basecampProjects = projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      purpose: p.purpose,
+      url: p.app_url,
+    }));
+
+    // Determine which projects to fetch full details for
+    const targetProjectIds: number[] = [];
     if (options.basecampProjectId) {
-      // Specific project: fetch full summary
-      const projectSummary = await basecampClient.getProjectSummary(
-        options.basecampProjectId
+      targetProjectIds.push(options.basecampProjectId);
+    } else if (projects.length <= 5) {
+      // Small account: fetch summaries for all projects
+      targetProjectIds.push(...projects.map((p) => p.id));
+    }
+
+    // Fetch full summaries (todos, messages) for target projects
+    if (targetProjectIds.length > 0) {
+      const summaries = await Promise.allSettled(
+        targetProjectIds.map((pid) =>
+          basecampClient.getProjectSummary(pid)
+        )
       );
-      context.basecampData = {
-        projectId: projectSummary.project.id,
-        projectName: projectSummary.project.name,
-        todos: projectSummary.activeTodos.map((todo) => ({
-          id: todo.id,
-          content: todo.content,
-          completed: todo.completed,
-          dueDate: todo.due_on,
-          assignee: todo.assignees?.[0]?.name,
-        })),
-        milestones: [],
-      };
-    } else {
-      // No specific project: fetch all projects so Claude has data to work with
-      const projects = await basecampClient.getProjects();
-      context.basecampProjects = projects.map((p) => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        purpose: p.purpose,
-        url: p.app_url,
-      }));
+
+      context.basecampDetails = summaries
+        .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof basecampClient.getProjectSummary>>> => r.status === "fulfilled")
+        .map((r) => ({
+          projectId: r.value.project.id,
+          projectName: r.value.project.name,
+          todos: r.value.activeTodos.map((todo) => ({
+            id: todo.id,
+            content: todo.content,
+            completed: todo.completed,
+            dueDate: todo.due_on,
+            assignee: todo.assignees?.[0]?.name,
+          })),
+          recentMessages: r.value.recentMessages.map((msg) => ({
+            id: msg.id,
+            subject: msg.subject,
+            createdAt: msg.created_at,
+          })),
+        }));
     }
   } catch (error) {
     console.error("Error fetching Basecamp data:", error);

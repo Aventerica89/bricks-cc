@@ -81,7 +81,29 @@ export function buildContextString(context: ChatContext): string {
     context.basecampProjects.forEach((p) => {
       parts.push(`  - [${p.id}] ${p.name}${p.description ? `: ${p.description}` : ""}`);
     });
-    parts.push("\nTo see todos/messages for a project, use a basecamp_query action with the project ID.");
+  }
+
+  if (context.basecampDetails && context.basecampDetails.length > 0) {
+    context.basecampDetails.forEach((detail) => {
+      parts.push(`\n--- ${detail.projectName} (ID: ${detail.projectId}) ---`);
+      if (detail.todos.length > 0) {
+        parts.push("Active Todos:");
+        detail.todos.forEach((todo) => {
+          const status = todo.completed ? "[DONE]" : "[TODO]";
+          const due = todo.dueDate ? ` (due: ${todo.dueDate})` : "";
+          const who = todo.assignee ? ` [${todo.assignee}]` : "";
+          parts.push(`  ${status} ${todo.content}${due}${who}`);
+        });
+      } else {
+        parts.push("No active todos.");
+      }
+      if (detail.recentMessages.length > 0) {
+        parts.push("Recent Messages:");
+        detail.recentMessages.forEach((msg) => {
+          parts.push(`  - ${msg.subject} (${msg.createdAt})`);
+        });
+      }
+    });
   }
 
   if (context.basecampData) {

@@ -53,11 +53,19 @@ export interface BasecampProjectSummary {
   url: string;
 }
 
+export interface BasecampProjectDetail {
+  projectId: number;
+  projectName: string;
+  todos: ChatBasecampTodo[];
+  recentMessages: { id: number; subject: string; createdAt: string }[];
+}
+
 export interface ChatContext {
   clientId: string;
   siteId: string;
   basecampData?: BasecampProjectData;
   basecampProjects?: BasecampProjectSummary[];
+  basecampDetails?: BasecampProjectDetail[];
   bricksData?: BricksPageData;
   recentMessages?: ChatMessage[];
 }
