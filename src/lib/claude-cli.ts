@@ -33,6 +33,9 @@ export async function processWithClaude(
 
   const userContent = `Context:\n${input.context}\n\nUser: ${input.userMessage}`;
 
+  console.log("[Claude] Context length:", input.context.length, "chars");
+  console.log("[Claude] Context preview:", input.context.substring(0, 500));
+
   try {
     const client = new Anthropic();
 
