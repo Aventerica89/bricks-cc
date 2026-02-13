@@ -281,4 +281,43 @@ export function createBasecampClient(options?: {
   });
 }
 
+/**
+ * Create a Basecamp client from the DB-stored OAuth token.
+ * Queries platformSettings for the encrypted token + account ID,
+ * decrypts, and returns a ready-to-use client.
+ * Falls back to env vars if DB has no token.
+ */
+export async function createBasecampClientFromSettings(): Promise<BasecampClient> {
+  // Lazy-import to avoid circular deps
+  const { db } = await import("./db");
+  const { platformSettings } = await import("@/db/schema");
+  const { eq } = await import("drizzle-orm");
+  const { decryptBasecampToken } = await import("./secure-keys");
+
+  const row = await db
+    .select({
+      accountId: platformSettings.basecampAccountId,
+      token: platformSettings.basecampOauthToken,
+    })
+    .from(platformSettings)
+    .where(eq(platformSettings.id, "default"))
+    .limit(1);
+
+  const settings = row[0];
+
+  if (settings?.token && settings?.accountId) {
+    const accessToken = decryptBasecampToken(settings.token);
+    if (accessToken) {
+      return new BasecampClient({
+        accountId: parseInt(settings.accountId, 10),
+        accessToken,
+        userAgent: process.env.BASECAMP_USER_AGENT,
+      });
+    }
+  }
+
+  // Fallback to env vars
+  return createBasecampClient();
+}
+
 export default BasecampClient;

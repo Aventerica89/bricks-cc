@@ -1,7 +1,7 @@
 import { db } from "./db";
-import { chatMessages } from "@/db/schema";
+import { chatMessages, clientSites } from "@/db/schema";
 import { desc, eq, and } from "drizzle-orm";
-import { createBasecampClient } from "./basecamp";
+import { createBasecampClientFromSettings } from "./basecamp";
 import { createBricksClient } from "./bricks";
 import type { ChatContext, ChatMessage as ChatMessageType } from "@/types/chat";
 
@@ -36,10 +36,18 @@ export async function buildContext(
     context.recentMessages = recentMessages;
   }
 
-  // Fetch Basecamp data if project ID is provided
+  // Auto-lookup basecampProjectId from site record if not provided
+  if (!options.basecampProjectId) {
+    const siteInfo = await getClientSiteInfo(options.clientId, options.siteId);
+    if (siteInfo?.basecampProjectId) {
+      options = { ...options, basecampProjectId: siteInfo.basecampProjectId };
+    }
+  }
+
+  // Fetch Basecamp data if project ID is available
   if (options.basecampProjectId) {
     try {
-      const basecampClient = createBasecampClient();
+      const basecampClient = await createBasecampClientFromSettings();
       const projectSummary = await basecampClient.getProjectSummary(
         options.basecampProjectId
       );
@@ -132,7 +140,7 @@ async function getChatHistory(
 }
 
 /**
- * Get client site information
+ * Get client site information from the database
  */
 export async function getClientSiteInfo(
   clientId: string,
@@ -141,9 +149,23 @@ export async function getClientSiteInfo(
   siteUrl?: string;
   basecampProjectId?: number;
 } | null> {
-  // This would query the clientSites table
-  // For now, return null to indicate we need to implement this
-  return null;
+  const site = await db
+    .select({
+      url: clientSites.url,
+      basecampProjectId: clientSites.basecampProjectId,
+    })
+    .from(clientSites)
+    .where(
+      and(eq(clientSites.id, siteId), eq(clientSites.clientId, clientId))
+    )
+    .limit(1);
+
+  if (!site[0]) return null;
+
+  return {
+    siteUrl: site[0].url,
+    basecampProjectId: site[0].basecampProjectId ?? undefined,
+  };
 }
 
 /**

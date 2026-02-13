@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { clientFeedback, basecampSync } from "@/db/schema";
-import { createBasecampClient } from "@/lib/basecamp";
+import { createBasecampClientFromSettings } from "@/lib/basecamp";
 import { eq } from "drizzle-orm";
 import type { BasecampSyncRequest, BasecampSyncResponse } from "@/types/basecamp";
 
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as BasecampSyncRequest;
     const { feedbackId, action, payload } = body;
 
-    const basecampClient = createBasecampClient();
+    const basecampClient = await createBasecampClientFromSettings();
 
     let response: BasecampSyncResponse;
 

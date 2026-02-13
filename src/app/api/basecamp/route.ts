@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createBasecampClient } from "@/lib/basecamp";
+import { createBasecampClientFromSettings } from "@/lib/basecamp";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const resource = searchParams.get("resource") || "summary";
 
   try {
-    const basecampClient = createBasecampClient();
+    const basecampClient = await createBasecampClientFromSettings();
 
     if (!projectId) {
       // Return all projects
