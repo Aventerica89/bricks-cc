@@ -44,54 +44,16 @@ export async function buildContext(
     }
   }
 
-  // Fetch Basecamp data — specific project or account-level project list
+  // Fetch Basecamp data with 8s timeout to avoid Vercel function timeout
   try {
-    const basecampClient = await createBasecampClientFromSettings();
+    const basecampData = await Promise.race([
+      fetchBasecampContext(options.basecampProjectId),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000)),
+    ]);
 
-    const projects = await basecampClient.getProjects();
-    context.basecampProjects = projects.map((p) => ({
-      id: p.id,
-      name: p.name,
-      description: p.description,
-      purpose: p.purpose,
-      url: p.app_url,
-    }));
-
-    // Determine which projects to fetch full details for
-    const targetProjectIds: number[] = [];
-    if (options.basecampProjectId) {
-      targetProjectIds.push(options.basecampProjectId);
-    } else if (projects.length <= 5) {
-      // Small account: fetch summaries for all projects
-      targetProjectIds.push(...projects.map((p) => p.id));
-    }
-
-    // Fetch full summaries (todos, messages) for target projects
-    if (targetProjectIds.length > 0) {
-      const summaries = await Promise.allSettled(
-        targetProjectIds.map((pid) =>
-          basecampClient.getProjectSummary(pid)
-        )
-      );
-
-      context.basecampDetails = summaries
-        .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof basecampClient.getProjectSummary>>> => r.status === "fulfilled")
-        .map((r) => ({
-          projectId: r.value.project.id,
-          projectName: r.value.project.name,
-          todos: r.value.activeTodos.map((todo) => ({
-            id: todo.id,
-            content: todo.content,
-            completed: todo.completed,
-            dueDate: todo.due_on,
-            assignee: todo.assignees?.[0]?.name,
-          })),
-          recentMessages: r.value.recentMessages.map((msg) => ({
-            id: msg.id,
-            subject: msg.subject,
-            createdAt: msg.created_at,
-          })),
-        }));
+    if (basecampData) {
+      context.basecampProjects = basecampData.projects;
+      context.basecampDetails = basecampData.details;
     }
   } catch (error) {
     console.error("Error fetching Basecamp data:", error);
@@ -123,6 +85,53 @@ export async function buildContext(
   }
 
   return context;
+}
+
+/**
+ * Fetch Basecamp context data with minimal API calls.
+ * Gets project list (1 call) + summary for ONE project (4-5 calls).
+ */
+async function fetchBasecampContext(targetProjectId?: number) {
+  const basecampClient = await createBasecampClientFromSettings();
+  const allProjects = await basecampClient.getProjects();
+
+  const projects = allProjects.map((p) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    purpose: p.purpose,
+    url: p.app_url,
+  }));
+
+  // Only fetch detailed summary for ONE project to stay fast
+  const projectToDetail = targetProjectId || allProjects[0]?.id;
+  const details: NonNullable<import("@/types/chat").ChatContext["basecampDetails"]> = [];
+
+  if (projectToDetail) {
+    try {
+      const summary = await basecampClient.getProjectSummary(projectToDetail);
+      details.push({
+        projectId: summary.project.id,
+        projectName: summary.project.name,
+        todos: summary.activeTodos.map((todo) => ({
+          id: todo.id,
+          content: todo.content,
+          completed: todo.completed,
+          dueDate: todo.due_on,
+          assignee: todo.assignees?.[0]?.name,
+        })),
+        recentMessages: summary.recentMessages.map((msg) => ({
+          id: msg.id,
+          subject: msg.subject,
+          createdAt: msg.created_at,
+        })),
+      });
+    } catch (err) {
+      console.error("Error fetching project summary:", err);
+    }
+  }
+
+  return { projects, details };
 }
 
 /**
