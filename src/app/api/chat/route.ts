@@ -240,6 +240,22 @@ async function executeActions(
           });
           break;
 
+        case "basecamp_query": {
+          // Fetch Basecamp data on demand
+          const qProjectId = action.payload.projectId;
+          const qResource = action.payload.resource || "summary";
+          const queryUrl = `${internalUrl}/api/basecamp?projectId=${qProjectId}&resource=${qResource}`;
+          const queryRes = await fetch(queryUrl);
+          const queryData = await queryRes.json();
+          results.push({
+            type: "basecamp_query" as ChatAction["type"],
+            payload: { ...action.payload, data: queryData },
+            status: queryRes.ok ? "completed" as const : "failed" as const,
+            error: queryRes.ok ? undefined : "Failed to query Basecamp",
+          });
+          break;
+        }
+
         default:
           results.push({
             type: action.type as ChatAction["type"],

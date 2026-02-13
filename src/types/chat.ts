@@ -11,7 +11,7 @@ export interface ChatMessage {
 }
 
 export interface ChatAction {
-  type: "bricks_edit" | "basecamp_create_todo" | "basecamp_update_todo";
+  type: "bricks_edit" | "basecamp_create_todo" | "basecamp_update_todo" | "basecamp_query";
   payload: Record<string, unknown>;
   status: "pending" | "completed" | "failed";
   error?: string;
@@ -45,10 +45,19 @@ export interface ChatSession {
   lastMessageAt: Date;
 }
 
+export interface BasecampProjectSummary {
+  id: number;
+  name: string;
+  description: string;
+  purpose: string;
+  url: string;
+}
+
 export interface ChatContext {
   clientId: string;
   siteId: string;
   basecampData?: BasecampProjectData;
+  basecampProjects?: BasecampProjectSummary[];
   bricksData?: BricksPageData;
   recentMessages?: ChatMessage[];
 }

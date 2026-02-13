@@ -44,14 +44,15 @@ export async function buildContext(
     }
   }
 
-  // Fetch Basecamp data if project ID is available
-  if (options.basecampProjectId) {
-    try {
-      const basecampClient = await createBasecampClientFromSettings();
+  // Fetch Basecamp data — specific project or account-level project list
+  try {
+    const basecampClient = await createBasecampClientFromSettings();
+
+    if (options.basecampProjectId) {
+      // Specific project: fetch full summary
       const projectSummary = await basecampClient.getProjectSummary(
         options.basecampProjectId
       );
-
       context.basecampData = {
         projectId: projectSummary.project.id,
         projectName: projectSummary.project.name,
@@ -62,11 +63,21 @@ export async function buildContext(
           dueDate: todo.due_on,
           assignee: todo.assignees?.[0]?.name,
         })),
-        milestones: [], // Would need to fetch from schedule
+        milestones: [],
       };
-    } catch (error) {
-      console.error("Error fetching Basecamp data:", error);
+    } else {
+      // No specific project: fetch all projects so Claude has data to work with
+      const projects = await basecampClient.getProjects();
+      context.basecampProjects = projects.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        purpose: p.purpose,
+        url: p.app_url,
+      }));
     }
+  } catch (error) {
+    console.error("Error fetching Basecamp data:", error);
   }
 
   // Fetch Bricks page data if page ID is provided

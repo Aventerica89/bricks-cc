@@ -284,6 +284,8 @@ function formatActionLabel(action: ChatAction): string {
       return "Todo created";
     case "basecamp_update_todo":
       return "Todo updated";
+    case "basecamp_query":
+      return "Basecamp data loaded";
     default:
       return action.type;
   }

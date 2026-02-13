@@ -76,6 +76,14 @@ export function buildContextString(context: ChatContext): string {
   parts.push(`Client ID: ${context.clientId}`);
   parts.push(`Site ID: ${context.siteId}`);
 
+  if (context.basecampProjects && context.basecampProjects.length > 0) {
+    parts.push(`\nBasecamp Projects (${context.basecampProjects.length} total):`);
+    context.basecampProjects.forEach((p) => {
+      parts.push(`  - [${p.id}] ${p.name}${p.description ? `: ${p.description}` : ""}`);
+    });
+    parts.push("\nTo see todos/messages for a project, use a basecamp_query action with the project ID.");
+  }
+
   if (context.basecampData) {
     parts.push(`\nBasecamp Project: ${context.basecampData.projectName}`);
 
