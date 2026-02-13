@@ -50,26 +50,26 @@ const categoryConfig: Record<
   "container-grids": {
     label: "Container Grids",
     icon: Grid3x3,
-    color: "text-purple-600",
-    bgColor: "bg-purple-100",
+    color: "text-purple-400",
+    bgColor: "bg-purple-500/10",
   },
   "media-queries": {
     label: "Media Queries",
     icon: Monitor,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100",
+    color: "text-blue-400",
+    bgColor: "bg-blue-500/10",
   },
   "plugin-resources": {
     label: "Plugin Resources",
     icon: Package,
-    color: "text-green-600",
-    bgColor: "bg-green-100",
+    color: "text-green-400",
+    bgColor: "bg-green-500/10",
   },
   "acss-docs": {
     label: "ACSS Docs",
     icon: FileText,
-    color: "text-orange-600",
-    bgColor: "bg-orange-100",
+    color: "text-orange-400",
+    bgColor: "bg-orange-500/10",
   },
 };
 
@@ -231,8 +231,8 @@ export default function LessonDetailPage({
       categoryConfig[category] || {
         label: category,
         icon: FileText,
-        color: "text-gray-600",
-        bgColor: "bg-gray-100",
+        color: "text-[#a1a1a1]",
+        bgColor: "bg-[#1e1e1e]",
       }
     );
   };
@@ -241,7 +241,7 @@ export default function LessonDetailPage({
     switch (status) {
       case "published":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-green-500/10 text-green-400">
             <CheckCircle className="w-3.5 h-3.5" />
             Published
           </span>
@@ -255,7 +255,7 @@ export default function LessonDetailPage({
         );
       case "archived":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-[#1e1e1e] text-[#666]">
             <AlertCircle className="w-3.5 h-3.5" />
             Archived
           </span>
@@ -267,10 +267,10 @@ export default function LessonDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0c0c0c] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading lesson...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto"></div>
+          <p className="mt-4 text-[#a1a1a1]">Loading lesson...</p>
         </div>
       </div>
     );
@@ -278,18 +278,18 @@ export default function LessonDetailPage({
 
   if (!lesson) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0c0c0c] flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <AlertCircle className="w-16 h-16 text-[#666] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#f5f5f5] mb-2">
             Lesson not found
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[#a1a1a1] mb-6">
             This lesson may have been deleted or doesn&apos;t exist.
           </p>
           <Link
             href="/teaching"
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium"
+            className="inline-flex items-center gap-2 text-teal-500 hover:text-teal-400 font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Teaching System
@@ -303,11 +303,11 @@ export default function LessonDetailPage({
   const CategoryIcon = config.icon;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0c0c0c]">
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-top-2 ${
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${
             notification.type === "success"
               ? "bg-green-600 text-white"
               : "bg-red-600 text-white"
@@ -323,11 +323,11 @@ export default function LessonDetailPage({
       )}
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#161616] border-b border-[#2a2a2a]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link
             href="/teaching"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors mb-6"
+            className="inline-flex items-center gap-2 text-[#a1a1a1] hover:text-teal-500 transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back to Teaching System</span>
@@ -340,19 +340,19 @@ export default function LessonDetailPage({
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-[#f5f5f5]">
                     {lesson.title}
                   </h1>
                   {getStatusBadge(lesson.status)}
                 </div>
-                <p className="text-gray-600">{config.label}</p>
+                <p className="text-[#a1a1a1]">{config.label}</p>
               </div>
             </div>
 
             <div className="flex gap-2">
               <button
                 onClick={() => setEditing(!editing)}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#a1a1a1] border border-[#2a2a2a] rounded-lg hover:bg-[#1e1e1e] transition-colors"
               >
                 {editing ? (
                   <>
@@ -368,7 +368,7 @@ export default function LessonDetailPage({
               </button>
               <button
                 onClick={handleDelete}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
                 Archive
@@ -384,13 +384,13 @@ export default function LessonDetailPage({
           <div className="lg:col-span-2 space-y-6">
             {/* Edit Form or Description */}
             {editing ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
+                <h2 className="text-lg font-semibold text-[#f5f5f5] mb-6">
                   Edit Lesson
                 </h2>
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                       Title
                     </label>
                     <input
@@ -399,12 +399,12 @@ export default function LessonDetailPage({
                       onChange={(e) =>
                         setFormData({ ...formData, title: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
+                      className="w-full px-4 py-2.5 text-[#f5f5f5] bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
                       placeholder="Enter lesson title"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                       Description
                     </label>
                     <textarea
@@ -413,13 +413,13 @@ export default function LessonDetailPage({
                       onChange={(e) =>
                         setFormData({ ...formData, description: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow resize-none"
+                      className="w-full px-4 py-2.5 text-[#f5f5f5] bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg focus:ring-2 focus:ring-teal-500/50 focus:outline-none resize-none"
                       placeholder="Describe what this lesson teaches..."
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                         Category
                       </label>
                       <select
@@ -427,7 +427,7 @@ export default function LessonDetailPage({
                         onChange={(e) =>
                           setFormData({ ...formData, category: e.target.value })
                         }
-                        className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
+                        className="w-full px-4 py-2.5 text-[#f5f5f5] bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
                       >
                         <option value="container-grids">Container Grids</option>
                         <option value="media-queries">Media Queries</option>
@@ -436,7 +436,7 @@ export default function LessonDetailPage({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                         Status
                       </label>
                       <select
@@ -444,7 +444,7 @@ export default function LessonDetailPage({
                         onChange={(e) =>
                           setFormData({ ...formData, status: e.target.value })
                         }
-                        className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
+                        className="w-full px-4 py-2.5 text-[#f5f5f5] bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
                       >
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
@@ -456,7 +456,7 @@ export default function LessonDetailPage({
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-6 py-2.5 rounded-lg font-medium disabled:bg-[#2a2a2a] disabled:text-[#666] transition-colors"
                     >
                       <Save className="w-4 h-4" />
                       {saving ? "Saving..." : "Save Changes"}
@@ -465,30 +465,30 @@ export default function LessonDetailPage({
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
+                <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
                   Description
                 </h2>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-[#a1a1a1] leading-relaxed">
                   {lesson.description || "No description provided."}
                 </p>
               </div>
             )}
 
             {/* Scenarios Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold text-[#f5f5f5]">
                     Scenarios
                   </h2>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <p className="text-sm text-[#666] mt-0.5">
                     Define teaching examples for this lesson
                   </p>
                 </div>
                 <button
                   onClick={() => setShowAddScenario(true)}
-                  className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+                  className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Scenario
@@ -499,9 +499,9 @@ export default function LessonDetailPage({
               {showAddScenario && (
                 <form
                   onSubmit={handleAddScenario}
-                  className="mb-6 p-4 bg-purple-50 border border-purple-100 rounded-lg"
+                  className="mb-6 p-4 bg-teal-500/5 border border-teal-500/20 rounded-lg"
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#a1a1a1] mb-2">
                     Scenario Name
                   </label>
                   <div className="flex gap-3">
@@ -510,13 +510,13 @@ export default function LessonDetailPage({
                       value={newScenarioName}
                       onChange={(e) => setNewScenarioName(e.target.value)}
                       placeholder="e.g., Basic grid with 3 columns"
-                      className="flex-1 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="flex-1 px-4 py-2 text-[#f5f5f5] bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg focus:ring-2 focus:ring-teal-500/50 focus:outline-none placeholder-[#666]"
                       autoFocus
                     />
                     <button
                       type="submit"
                       disabled={addingScenario || !newScenarioName.trim()}
-                      className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium disabled:bg-[#2a2a2a] disabled:text-[#666] transition-colors"
                     >
                       {addingScenario ? "Creating..." : "Create"}
                     </button>
@@ -526,7 +526,7 @@ export default function LessonDetailPage({
                         setShowAddScenario(false);
                         setNewScenarioName("");
                       }}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                      className="px-4 py-2 text-[#a1a1a1] hover:text-[#f5f5f5] transition-colors"
                     >
                       Cancel
                     </button>
@@ -537,13 +537,13 @@ export default function LessonDetailPage({
               {/* Scenarios List */}
               {scenarios.length === 0 ? (
                 <div className="text-center py-12 px-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Plus className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 bg-[#1e1e1e] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Plus className="w-8 h-8 text-[#666]" />
                   </div>
-                  <p className="text-gray-600 font-medium mb-1">
+                  <p className="text-[#a1a1a1] font-medium mb-1">
                     No scenarios yet
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[#666]">
                     Add scenarios to define specific teaching examples
                   </p>
                 </div>
@@ -559,13 +559,13 @@ export default function LessonDetailPage({
                       <Link
                         key={scenario.id}
                         href={`/teaching/scenarios/${scenario.id}`}
-                        className="block p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors group"
+                        className="block p-4 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg hover:border-teal-500/30 transition-colors group"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-gray-900 group-hover:text-purple-700">
+                          <h3 className="font-medium text-[#f5f5f5] group-hover:text-teal-400">
                             {scenario.name}
                           </h3>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-[#666]">
                             {new Date(scenario.createdAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -577,13 +577,13 @@ export default function LessonDetailPage({
                                 key={key}
                                 className={`inline-flex items-center gap-1 text-xs ${
                                   filled
-                                    ? "text-green-600"
-                                    : "text-gray-400"
+                                    ? "text-green-400"
+                                    : "text-[#666]"
                                 }`}
                               >
                                 <span
                                   className={`w-2 h-2 rounded-full ${
-                                    filled ? "bg-green-500" : "bg-gray-300"
+                                    filled ? "bg-green-500" : "bg-[#2a2a2a]"
                                   }`}
                                 />
                                 {label}
@@ -601,38 +601,38 @@ export default function LessonDetailPage({
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
+              <h3 className="text-sm font-semibold text-[#f5f5f5] uppercase tracking-wider mb-4">
                 Details
               </h3>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-xs text-gray-500 uppercase tracking-wider">
+                  <dt className="text-xs text-[#666] uppercase tracking-wider">
                     Status
                   </dt>
                   <dd className="mt-1">{getStatusBadge(lesson.status)}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-500 uppercase tracking-wider">
+                  <dt className="text-xs text-[#666] uppercase tracking-wider">
                     Category
                   </dt>
-                  <dd className="mt-1 text-sm font-medium text-gray-900">
+                  <dd className="mt-1 text-sm font-medium text-[#f5f5f5]">
                     {config.label}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-500 uppercase tracking-wider">
+                  <dt className="text-xs text-[#666] uppercase tracking-wider">
                     Scenarios
                   </dt>
-                  <dd className="mt-1 text-sm font-medium text-gray-900">
+                  <dd className="mt-1 text-sm font-medium text-[#f5f5f5]">
                     {scenarios.length}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-500 uppercase tracking-wider">
+                  <dt className="text-xs text-[#666] uppercase tracking-wider">
                     Created
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-600">
+                  <dd className="mt-1 text-sm text-[#a1a1a1]">
                     {new Date(lesson.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -641,10 +641,10 @@ export default function LessonDetailPage({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-500 uppercase tracking-wider">
+                  <dt className="text-xs text-[#666] uppercase tracking-wider">
                     Last Updated
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-600">
+                  <dd className="mt-1 text-sm text-[#a1a1a1]">
                     {new Date(lesson.updatedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -655,11 +655,11 @@ export default function LessonDetailPage({
               </dl>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 p-6">
-              <h3 className="text-sm font-semibold text-purple-900 mb-2">
+            <div className="bg-teal-500/5 rounded-xl border border-teal-500/20 p-6">
+              <h3 className="text-sm font-semibold text-teal-400 mb-2">
                 Pro Tip
               </h3>
-              <p className="text-sm text-purple-700 leading-relaxed">
+              <p className="text-sm text-[#a1a1a1] leading-relaxed">
                 Add multiple scenarios to help Claude understand different
                 variations and edge cases for this lesson.
               </p>

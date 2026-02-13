@@ -66,23 +66,23 @@ export default function TeachingPage() {
   const draftLessons = lessons.filter((l) => l.status === "draft");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-[#0c0c0c]">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="bg-[#161616] border-b border-[#2a2a2a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-3">
-                <BookOpen className="w-10 h-10 text-purple-600" />
+              <h1 className="text-4xl font-bold text-[#f5f5f5] flex items-center gap-3">
+                <BookOpen className="w-10 h-10 text-teal-500" />
                 Teaching System
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-[#a1a1a1]">
                 Build a comprehensive library of lessons to train Claude for perfect Bricks output
               </p>
             </div>
             <Link
               href="/teaching/lessons/new"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-6 py-3 rounded-lg font-semibold transition-colors"
             >
               <PlusCircle className="w-5 h-5" />
               Create Lesson
@@ -98,8 +98,8 @@ export default function TeachingPage() {
             onClick={() => setSelectedCategory(null)}
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
               selectedCategory === null
-                ? "bg-purple-600 text-white shadow-md"
-                : "bg-white text-gray-700 hover:bg-gray-50"
+                ? "bg-teal-500 text-gray-950"
+                : "bg-[#161616] text-[#a1a1a1] hover:bg-[#1e1e1e] border border-[#2a2a2a]"
             }`}
           >
             All Categories
@@ -112,8 +112,8 @@ export default function TeachingPage() {
                 onClick={() => setSelectedCategory(key)}
                 className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                   selectedCategory === key
-                    ? `${config.color} text-white shadow-md`
-                    : "bg-white text-gray-700 hover:bg-gray-50"
+                    ? `${config.color} text-white`
+                    : "bg-[#161616] text-[#a1a1a1] hover:bg-[#1e1e1e] border border-[#2a2a2a]"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -127,21 +127,21 @@ export default function TeachingPage() {
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-sm text-gray-600">Published Lessons</div>
-            <div className="text-3xl font-bold text-purple-600 mt-1">
+          <div className="bg-[#161616] rounded-lg p-6 border border-[#2a2a2a]">
+            <div className="text-sm text-[#a1a1a1]">Published Lessons</div>
+            <div className="text-3xl font-bold text-teal-500 mt-1">
               {publishedLessons.length}
             </div>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-sm text-gray-600">Draft Lessons</div>
-            <div className="text-3xl font-bold text-orange-600 mt-1">
+          <div className="bg-[#161616] rounded-lg p-6 border border-[#2a2a2a]">
+            <div className="text-sm text-[#a1a1a1]">Draft Lessons</div>
+            <div className="text-3xl font-bold text-orange-400 mt-1">
               {draftLessons.length}
             </div>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-sm text-gray-600">Total Lessons</div>
-            <div className="text-3xl font-bold text-blue-600 mt-1">
+          <div className="bg-[#161616] rounded-lg p-6 border border-[#2a2a2a]">
+            <div className="text-sm text-[#a1a1a1]">Total Lessons</div>
+            <div className="text-3xl font-bold text-blue-400 mt-1">
               {lessons.length}
             </div>
           </div>
@@ -152,21 +152,21 @@ export default function TeachingPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-12">
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-            <p className="mt-4 text-gray-600">Loading lessons...</p>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+            <p className="mt-4 text-[#a1a1a1]">Loading lessons...</p>
           </div>
         ) : lessons.length === 0 ? (
-          <div className="bg-white rounded-lg p-12 text-center shadow-sm">
-            <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="bg-[#161616] rounded-lg p-12 text-center border border-[#2a2a2a]">
+            <BookOpen className="w-16 h-16 text-[#666] mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2">
               No lessons yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-[#a1a1a1] mb-6">
               Create your first lesson to start teaching Claude
             </p>
             <Link
               href="/teaching/lessons/new"
-              className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-all"
+              className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-6 py-3 rounded-lg font-semibold transition-colors"
             >
               <PlusCircle className="w-5 h-5" />
               Create First Lesson
@@ -181,7 +181,7 @@ export default function TeachingPage() {
                 <Link
                   key={lesson.id}
                   href={`/teaching/lessons/${lesson.id}`}
-                  className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all border border-gray-200 hover:border-purple-300"
+                  className="bg-[#161616] rounded-lg p-6 border border-[#2a2a2a] hover:border-teal-500/30 transition-colors"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div
@@ -192,25 +192,25 @@ export default function TeachingPage() {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         lesson.status === "published"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-500/10 text-green-400"
                           : lesson.status === "draft"
-                          ? "bg-orange-100 text-orange-700"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-orange-500/10 text-orange-400"
+                          : "bg-[#1e1e1e] text-[#666]"
                       }`}
                     >
                       {lesson.status}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-[#f5f5f5] mb-2">
                     {lesson.title}
                   </h3>
                   {lesson.description && (
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="text-sm text-[#a1a1a1] line-clamp-2">
                       {lesson.description}
                     </p>
                   )}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">
+                  <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+                    <span className="text-xs text-[#666]">
                       {config.label}
                     </span>
                   </div>

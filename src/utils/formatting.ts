@@ -153,15 +153,15 @@ export function formatStatus(status: string): string {
  */
 export function getStatusColor(status: string): string {
   const colorMap: Record<string, string> = {
-    pending: "text-yellow-600 bg-yellow-100",
-    synced: "text-green-600 bg-green-100",
-    resolved: "text-gray-600 bg-gray-100",
-    active: "text-green-600 bg-green-100",
-    paused: "text-yellow-600 bg-yellow-100",
-    error: "text-red-600 bg-red-100",
-    in_progress: "text-blue-600 bg-blue-100",
-    completed: "text-green-600 bg-green-100",
+    pending: "text-yellow-400 bg-yellow-500/10",
+    synced: "text-green-400 bg-green-500/10",
+    resolved: "text-[#a1a1a1] bg-[#1e1e1e]",
+    active: "text-green-400 bg-green-500/10",
+    paused: "text-yellow-400 bg-yellow-500/10",
+    error: "text-red-400 bg-red-500/10",
+    in_progress: "text-blue-400 bg-blue-500/10",
+    completed: "text-green-400 bg-green-500/10",
   };
 
-  return colorMap[status] || "text-gray-600 bg-gray-100";
+  return colorMap[status] || "text-[#a1a1a1] bg-[#1e1e1e]";
 }

@@ -43,31 +43,31 @@ export default function NewLessonPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-[#0c0c0c]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/teaching"
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+            className="inline-flex items-center gap-2 text-teal-500 hover:text-teal-400 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Teaching System
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Create New Lesson</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-3xl font-bold text-[#f5f5f5]">Create New Lesson</h1>
+          <p className="mt-2 text-[#a1a1a1]">
             Define a new teaching scenario for Claude to learn from
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-8">
+        <form onSubmit={handleSubmit} className="bg-[#161616] rounded-lg border border-[#2a2a2a] p-8">
           <div className="space-y-6">
             {/* Title */}
             <div>
               <label
                 htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[#a1a1a1] mb-2"
               >
                 Lesson Title *
               </label>
@@ -79,7 +79,7 @@ export default function NewLessonPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
                 placeholder="e.g., Basic Container Grid Setup"
               />
             </div>
@@ -88,7 +88,7 @@ export default function NewLessonPage() {
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[#a1a1a1] mb-2"
               >
                 Description
               </label>
@@ -99,7 +99,7 @@ export default function NewLessonPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none resize-none"
                 placeholder="Describe what this lesson teaches..."
               />
             </div>
@@ -108,7 +108,7 @@ export default function NewLessonPage() {
             <div>
               <label
                 htmlFor="category"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[#a1a1a1] mb-2"
               >
                 Category *
               </label>
@@ -122,7 +122,7 @@ export default function NewLessonPage() {
                     category: e.target.value as typeof formData.category,
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
               >
                 <option value="container-grids">Container Grids</option>
                 <option value="media-queries">Media Queries</option>
@@ -135,7 +135,7 @@ export default function NewLessonPage() {
             <div>
               <label
                 htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[#a1a1a1] mb-2"
               >
                 Status *
               </label>
@@ -149,7 +149,7 @@ export default function NewLessonPage() {
                     status: e.target.value as typeof formData.status,
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
@@ -162,14 +162,14 @@ export default function NewLessonPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-600 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl"
+              className="flex-1 inline-flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-6 py-3 rounded-lg font-semibold disabled:bg-[#2a2a2a] disabled:text-[#666] transition-colors"
             >
               <Save className="w-5 h-5" />
               {loading ? "Creating..." : "Create Lesson"}
             </button>
             <Link
               href="/teaching"
-              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all"
+              className="px-6 py-3 border border-[#2a2a2a] rounded-lg font-semibold text-[#a1a1a1] hover:bg-[#1e1e1e] transition-colors"
             >
               Cancel
             </Link>

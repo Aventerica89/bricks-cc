@@ -87,7 +87,7 @@ export default function BricksEditor({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
       </div>
     );
   }
@@ -95,11 +95,11 @@ export default function BricksEditor({
   if (error) {
     return (
       <div className="text-center py-12">
-        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <p className="text-red-500">{error}</p>
+        <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+        <p className="text-red-400">{error}</p>
         <button
           onClick={loadPageData}
-          className="mt-4 text-purple-600 hover:underline"
+          className="mt-4 text-teal-500 hover:text-teal-400"
         >
           Try again
         </button>
@@ -109,23 +109,23 @@ export default function BricksEditor({
 
   if (!pageState) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[#666]">
         No page data available
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
+    <div className="bg-[#161616] rounded-lg border border-[#2a2a2a]">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
         <div className="flex items-center gap-3">
-          <Layout className="w-5 h-5 text-purple-600" />
+          <Layout className="w-5 h-5 text-teal-500" />
           <div>
-            <h2 className="font-semibold text-gray-800">
+            <h2 className="font-semibold text-[#f5f5f5]">
               {pageState.pageTitle}
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#666]">
               {pageState.elements.length} elements
             </p>
           </div>
@@ -135,13 +135,13 @@ export default function BricksEditor({
           <button
             onClick={handleRefresh}
             disabled={isLoading}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-2 text-[#a1a1a1] hover:text-[#f5f5f5] px-3 py-2 rounded-lg hover:bg-[#1e1e1e] transition-colors"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
             Refresh
           </button>
           {!readOnly && (
-            <button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <button className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-gray-950 px-4 py-2 rounded-lg transition-colors">
               <Eye className="w-4 h-4" />
               Preview
             </button>
@@ -151,8 +151,8 @@ export default function BricksEditor({
 
       <div className="flex">
         {/* Elements Tree */}
-        <div className="w-1/3 border-r border-gray-200 p-4 max-h-[500px] overflow-y-auto">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">
+        <div className="w-1/3 border-r border-[#2a2a2a] p-4 max-h-[500px] overflow-y-auto">
+          <h3 className="text-sm font-medium text-[#a1a1a1] mb-3">
             Page Elements
           </h3>
           <div className="space-y-1">
@@ -186,7 +186,7 @@ export default function BricksEditor({
               }}
             />
           ) : (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-[#666]">
               Select an element to view details
             </div>
           )}
@@ -223,8 +223,8 @@ function ElementTreeItem({
       onClick={onClick}
       className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
         isSelected
-          ? "bg-purple-100 text-purple-700"
-          : "hover:bg-gray-100 text-gray-700"
+          ? "bg-teal-500/10 text-teal-400"
+          : "hover:bg-[#1e1e1e] text-[#a1a1a1]"
       }`}
     >
       {getIcon(element.name)}
@@ -247,11 +247,11 @@ function ElementDetails({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-gray-800">
+        <h3 className="font-semibold text-[#f5f5f5]">
           {element.label || element.name}
         </h3>
         {!readOnly && (
-          <button className="flex items-center gap-1 text-purple-600 hover:text-purple-700 text-sm">
+          <button className="flex items-center gap-1 text-teal-500 hover:text-teal-400 text-sm">
             <Edit3 className="w-4 h-4" />
             Edit
           </button>
@@ -260,30 +260,30 @@ function ElementDetails({
 
       <div className="space-y-3">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">ID</label>
-          <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+          <label className="block text-xs text-[#666] mb-1">ID</label>
+          <code className="text-sm bg-[#1e1e1e] text-[#a1a1a1] px-2 py-1 rounded">
             {element.id}
           </code>
         </div>
 
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Type</label>
-          <span className="text-sm">{element.name}</span>
+          <label className="block text-xs text-[#666] mb-1">Type</label>
+          <span className="text-sm text-[#f5f5f5]">{element.name}</span>
         </div>
 
         {element.settings._cssClasses && (
           <div>
-            <label className="block text-xs text-gray-500 mb-1">
+            <label className="block text-xs text-[#666] mb-1">
               CSS Classes
             </label>
-            <span className="text-sm">{element.settings._cssClasses}</span>
+            <span className="text-sm text-[#f5f5f5]">{element.settings._cssClasses}</span>
           </div>
         )}
 
         {/* Settings preview */}
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Settings</label>
-          <pre className="text-xs bg-gray-50 p-3 rounded-lg overflow-auto max-h-48">
+          <label className="block text-xs text-[#666] mb-1">Settings</label>
+          <pre className="text-xs bg-[#1e1e1e] text-[#a1a1a1] p-3 rounded-lg overflow-auto max-h-48">
             {JSON.stringify(element.settings, null, 2)}
           </pre>
         </div>

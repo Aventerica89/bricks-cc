@@ -209,8 +209,8 @@ export default function ScenarioDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
+      <div className="min-h-screen bg-[#0c0c0c] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -218,7 +218,7 @@ export default function ScenarioDetailPage({
   if (!scenario) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0c0c0c]">
       {/* Notification */}
       {notification && (
         <div
@@ -238,11 +238,11 @@ export default function ScenarioDetailPage({
       )}
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#161616] border-b border-[#2a2a2a]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link
             href={`/teaching/lessons/${scenario.lessonId}`}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-teal-500 hover:text-teal-400 transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back to Lesson</span>
@@ -250,10 +250,10 @@ export default function ScenarioDetailPage({
 
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-[#f5f5f5]">
                 Edit Scenario
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-[#666] mt-1">
                 Fill in training data for this scenario
               </p>
             </div>
@@ -261,14 +261,14 @@ export default function ScenarioDetailPage({
               <button
                 onClick={handleSave}
                 disabled={saving || !form.name.trim()}
-                className="inline-flex items-center gap-2 bg-purple-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center gap-2 bg-teal-500 text-gray-950 px-5 py-2 rounded-lg text-sm font-medium hover:bg-teal-600 disabled:opacity-50 transition-colors"
               >
                 <Save className="w-4 h-4" />
                 {saving ? "Saving..." : "Save"}
               </button>
               <button
                 onClick={handleDelete}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/10 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete
@@ -287,7 +287,7 @@ export default function ScenarioDetailPage({
               type="text"
               value={form.name}
               onChange={(e) => updateField("name", e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none"
               placeholder="e.g., Hero section with 3-column grid"
             />
           </FormSection>
@@ -303,10 +303,10 @@ export default function ScenarioDetailPage({
               value={form.acssJsDump}
               onChange={(e) => updateField("acssJsDump", e.target.value)}
               onBlur={() => validateJson(form.acssJsDump, "acssJsDump")}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm ${
+              className={`w-full px-4 py-2.5 bg-[#1e1e1e] border rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none font-mono text-sm ${
                 jsonErrors.acssJsDump
-                  ? "border-red-300"
-                  : "border-gray-300"
+                  ? "border-red-500/50"
+                  : "border-[#2a2a2a]"
               }`}
               placeholder='{"variables": {...}, "breakpoints": {...}}'
             />
@@ -323,7 +323,7 @@ export default function ScenarioDetailPage({
               onChange={(e) =>
                 updateField("correctContainerGridCode", e.target.value)
               }
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
+              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none font-mono text-sm"
               placeholder={`.container {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: var(--space-l);\n}`}
             />
           </FormSection>
@@ -343,10 +343,10 @@ export default function ScenarioDetailPage({
               onBlur={() =>
                 validateJson(form.expectedOutput, "expectedOutput")
               }
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm ${
+              className={`w-full px-4 py-2.5 bg-[#1e1e1e] border rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none font-mono text-sm ${
                 jsonErrors.expectedOutput
-                  ? "border-red-300"
-                  : "border-gray-300"
+                  ? "border-red-500/50"
+                  : "border-[#2a2a2a]"
               }`}
               placeholder='{"id": "abc", "name": "container", "settings": {...}, "children": [...]}'
             />
@@ -367,10 +367,10 @@ export default function ScenarioDetailPage({
               onBlur={() =>
                 validateJson(form.cssHandlingRules, "cssHandlingRules")
               }
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm ${
+              className={`w-full px-4 py-2.5 bg-[#1e1e1e] border rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none font-mono text-sm ${
                 jsonErrors.cssHandlingRules
-                  ? "border-red-300"
-                  : "border-gray-300"
+                  ? "border-red-500/50"
+                  : "border-[#2a2a2a]"
               }`}
               placeholder='{"useAcssClasses": true, "inlineStyles": false}'
             />
@@ -391,10 +391,10 @@ export default function ScenarioDetailPage({
               onBlur={() =>
                 validateJson(form.validationRules, "validationRules")
               }
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm ${
+              className={`w-full px-4 py-2.5 bg-[#1e1e1e] border rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none font-mono text-sm ${
                 jsonErrors.validationRules
-                  ? "border-red-300"
-                  : "border-gray-300"
+                  ? "border-red-500/50"
+                  : "border-[#2a2a2a]"
               }`}
               placeholder='{"requiredElements": ["container", "section"], "maxDepth": 5}'
             />
@@ -409,7 +409,7 @@ export default function ScenarioDetailPage({
                 onChange={(e) =>
                   updateField("screenshotBeforeUrl", e.target.value)
                 }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none text-sm"
                 placeholder="https://..."
               />
             </FormSection>
@@ -420,7 +420,7 @@ export default function ScenarioDetailPage({
                 onChange={(e) =>
                   updateField("screenshotAfterUrl", e.target.value)
                 }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-[#f5f5f5] placeholder-[#666] focus:ring-2 focus:ring-teal-500/50 focus:outline-none text-sm"
                 placeholder="https://..."
               />
             </FormSection>
@@ -428,17 +428,17 @@ export default function ScenarioDetailPage({
         </div>
 
         {/* Bottom save bar */}
-        <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end gap-3">
+        <div className="mt-8 pt-6 border-t border-[#2a2a2a] flex justify-end gap-3">
           <Link
             href={`/teaching/lessons/${scenario.lessonId}`}
-            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-5 py-2.5 text-sm font-medium text-[#a1a1a1] border border-[#2a2a2a] rounded-lg hover:bg-[#1e1e1e] transition-colors"
           >
             Cancel
           </Link>
           <button
             onClick={handleSave}
             disabled={saving || !form.name.trim()}
-            className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-2 bg-teal-500 text-gray-950 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-600 disabled:opacity-50 transition-colors"
           >
             <Save className="w-4 h-4" />
             {saving ? "Saving..." : "Save Scenario"}
@@ -461,18 +461,18 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-[#161616] rounded-xl border border-[#2a2a2a] p-6">
       <div className="mb-3">
-        <label className="block text-sm font-semibold text-gray-900">
+        <label className="block text-sm font-semibold text-[#f5f5f5]">
           {title}
         </label>
         {description && (
-          <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+          <p className="text-xs text-[#666] mt-0.5">{description}</p>
         )}
       </div>
       {children}
       {error && (
-        <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+        <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           {error}
         </p>
